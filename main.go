@@ -41,7 +41,7 @@ func loadAPIKey() error {
 func ListDatabases() {
 	type ListResponse struct {
 		Response
-		Results []Database `json:"results"`
+		Results []*Database `json:"results"`
 	}
 
 	var resp ListResponse
@@ -93,11 +93,11 @@ type ObjectType interface {
 }
 
 type Database struct {
-	CreatedTime    string                 `json:"created_time"`
-	ID             string                 `json:"id"`
-	LastEditedTime string                 `json:"last_edited_time"`
-	Object         string                 `json:"object"`
-	Properties     map[string]interface{} `json:"properties"`
+	CreatedTime    string     `json:"created_time"`
+	ID             string     `json:"id"`
+	LastEditedTime string     `json:"last_edited_time"`
+	Object         string     `json:"object"`
+	Properties     Properties `json:"properties"`
 }
 
 func (*Database) TypeName() string {
@@ -117,3 +117,37 @@ const (
 	ObjectTypeDatabase = "database"
 	ObjectTypeList     = "list"
 )
+
+type Property struct {
+	ID    string      `json:"id"`
+	Type  string      `json:"type"`
+	Name  string      `json:"-"`
+	Value interface{} `json:-`
+}
+
+type Properties []*Property
+
+func (p Properties) UnmarshalJSON(b []byte) error {
+	var m map[string]interface{}
+	if err := json.Unmarshal(b, &m); err != nil {
+		return err
+	}
+
+	for k, v := range m {
+		prop := &Property{Name: k}
+		for kk, vv := range v.(map[string]interface{}) {
+			switch kk {
+			case "id":
+				prop.ID = vv.(string)
+			case "type":
+				prop.Type = vv.(string)
+			default:
+				prop.Value = vv
+			}
+		}
+
+		p = append(p, prop)
+	}
+
+	return nil
+}
