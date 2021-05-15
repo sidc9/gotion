@@ -2,20 +2,26 @@ package main
 
 type Filter struct {
 	Property string          `json:"property"`
-	Number   NumberFilter    `json:"number,omitempty"`
+	Number   *NumberFilter   `json:"number,omitempty"`
 	Checkbox map[string]bool `json:"checkbox,omitempty"`
 }
 
-type NumberFilter struct {
-	Property                string `json:"property"`
-	ParamGreaterThanOrEqual *int   `json:"greater_than_or_equal_to,omitempty"`
-	ParamGreaterThan        *int   `json:"greater_than_to,omitempty"`
-	ParamEquals             *int   `json:"equals,omitempty"`
-	paramSet                bool   `json:"-"`
+func NewFilter(property string) *Filter {
+	return &Filter{
+		Property: property,
+	}
 }
 
-func NewNumberFilter(propName string) *NumberFilter {
-	return &NumberFilter{Property: propName}
+type NumberFilter struct {
+	// Property                string `json:"property"`
+	ParamGreaterThanOrEqual *int `json:"greater_than_or_equal_to,omitempty"`
+	ParamGreaterThan        *int `json:"greater_than,omitempty"`
+	ParamEquals             *int `json:"equals,omitempty"`
+	paramSet                bool `json:"-"`
+}
+
+func NewNumberFilter() *NumberFilter {
+	return &NumberFilter{}
 }
 
 func (nf *NumberFilter) GreaterThanOrEqual(n int) *NumberFilter {

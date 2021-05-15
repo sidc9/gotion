@@ -51,14 +51,23 @@ func TestGetDatabase(t *testing.T) {
 func TestQueryDatabase(t *testing.T) {
 	is := is.New(t)
 
-	c := &Client{}
-
-	filt := &Filter{}
-
-	q := c.
-		NewDBQuery("934c6132-4ea7-485e-9b0d-cf1a083e0f3f").
-		WithFilter(filt)
-
-	err := q.Do()
+	apiKey, err := loadAPIKey()
 	is.NoErr(err)
+
+	c := NewClient(apiKey)
+
+	t.Run("simple query", func(t *testing.T) {
+		pages, err := c.QueryDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f", nil)
+		is.NoErr(err)
+		pretty.Println(pages)
+	})
+
+	t.Run("with filter", func(t *testing.T) {
+		filt := NewFilter("age")
+		filt.Number = NewNumberFilter().GreaterThan(24)
+		q := NewDBQuery().WithFilter(filt)
+		pages, err := c.QueryDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f", q)
+		is.NoErr(err)
+		pretty.Println(pages)
+	})
 }

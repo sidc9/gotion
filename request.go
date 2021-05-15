@@ -1,17 +1,24 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
 )
 
 var saveResp = ""
 
-func (c *Client) makeRequest(method, path string, body io.Reader, response interface{}) error {
-	req, err := http.NewRequest(method, fmt.Sprintf("%s%s", baseURL, path), body)
+func (c *Client) makeRequest(method, path string, body interface{}, response interface{}) error {
+	b, err := json.Marshal(body)
+	if err != nil {
+		return fmt.Errorf("failed to json marshal body: %w", err)
+	}
+	buf := bytes.NewBuffer(b)
+
+	fmt.Println(">>>", buf.String())
+	req, err := http.NewRequest(method, fmt.Sprintf("%s%s", baseURL, path), buf)
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
