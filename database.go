@@ -50,3 +50,28 @@ func (c *Client) GetDatabase(id string) (*Database, error) {
 
 	return &db, nil
 }
+
+type DBQuery struct {
+	Filter *Filter `json:"filter"`
+	Sorts  *Sort   `json:"sorts"`
+}
+
+func (c *Client) NewDBQuery() *DBQuery {
+	return &DBQuery{}
+}
+
+func (q *DBQuery) Do() error {
+	return nil
+}
+
+func (q *DBQuery) WithFilter(filter *Filter) *DBQuery {
+	q.Filter = filter
+	return q
+}
+
+func (q *DBQuery) WithSort(sort *Sort) *DBQuery {
+	q.Sorts = sort
+	return q
+}
+
+type Sort struct{}

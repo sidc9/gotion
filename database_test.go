@@ -47,3 +47,18 @@ func TestGetDatabase(t *testing.T) {
 
 	pretty.Println(db)
 }
+
+func TestQueryDatabase(t *testing.T) {
+	is := is.New(t)
+
+	c := &Client{}
+
+	filt := &Filter{}
+
+	q := c.
+		NewDBQuery("934c6132-4ea7-485e-9b0d-cf1a083e0f3f").
+		WithFilter(filt)
+
+	err := q.Do()
+	is.NoErr(err)
+}
