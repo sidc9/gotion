@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 	"strings"
+
+	"github.com/kr/pretty"
 )
 
 var (
@@ -15,11 +17,24 @@ var (
 )
 
 func main() {
-	if err := loadAPIKey(); err != nil {
+	if err := run(); err != nil {
 		log.Println(err)
 		os.Exit(1)
 	}
-	ListDatabases()
+}
+
+func run() error {
+	if err := loadAPIKey(); err != nil {
+		return err
+	}
+
+	resp, err := ListDatabases()
+	if err != nil {
+		return err
+	}
+	pretty.Println(resp)
+
+	return nil
 }
 
 func loadAPIKey() error {

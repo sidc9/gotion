@@ -2,10 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"log"
-	"os"
-
-	"github.com/kr/pretty"
+	"fmt"
 )
 
 type Database struct {
@@ -24,54 +21,58 @@ func (d *Database) String() string {
 	return ""
 }
 
-func ListDatabases() {
-	type ListResponse struct {
-		Response
-		Results []*Database `json:"results"`
-	}
+type ListResponse struct {
+	Response
+	Results []*Database `json:"results"`
+}
 
+func ListDatabases() (*ListResponse, error) {
 	var resp ListResponse
 
 	// if err := makeRequest(http.MethodGet, "databases", nil, &resp); err != nil {
-	if err := readFile(&resp); err != nil {
-		log.Println(err)
-		os.Exit(1)
+	if err := readFile(&resp, "list_db.txt"); err != nil {
+		return nil, err
 	}
 
-	// fmt.Println(resp)
-	pretty.Println(resp)
+	return &resp, nil
+}
+
+func (c *Client) GetDatabase(id string) (*Database, error) {
+	if id == "" {
+		return nil, fmt.Errorf("id is required")
+	}
+
+	var db Database
+	// if err := makeRequest(http.MethodGet, fmt.Sprintf("databases/%s", id), nil, &db); err != nil {
+	if err := readFile(&db, "get_db.txt"); err != nil {
+		return nil, err
+	}
+
+	return &db, nil
 }
 
 type Property struct {
 	ID    string      `json:"id"`
 	Type  string      `json:"type"`
-	Name  string      `json:"-"`
 	Value interface{} `json:-`
 }
 
-type Properties []*Property
+type NumberProperty struct {
+	Property
+	Format string `json:"format"`
+}
 
-func (p Properties) UnmarshalJSON(b []byte) error {
+type Properties map[string]*Property
+
+func (p *Property) UnmarshalJSON(b []byte) error {
 	var m map[string]interface{}
 	if err := json.Unmarshal(b, &m); err != nil {
 		return err
 	}
 
-	for k, v := range m {
-		prop := &Property{Name: k}
-		for kk, vv := range v.(map[string]interface{}) {
-			switch kk {
-			case "id":
-				prop.ID = vv.(string)
-			case "type":
-				prop.Type = vv.(string)
-			default:
-				prop.Value = vv
-			}
-		}
-
-		p = append(p, prop)
-	}
+	p.Type = m["type"].(string)
+	p.ID = m["id"].(string)
+	p.Value = m[p.Type]
 
 	return nil
 }

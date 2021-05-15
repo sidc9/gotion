@@ -4,8 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 )
+
+var saveResp = ""
 
 func makeRequest(method, path string, body io.Reader, response interface{}) error {
 	req, err := http.NewRequest(method, fmt.Sprintf("%s%s", baseURL, path), body)
@@ -23,6 +26,16 @@ func makeRequest(method, path string, body io.Reader, response interface{}) erro
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("http status: %s", resp.Status)
+	}
+
+	if saveResp != "" {
+		b, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return fmt.Errorf("failed to read body: %w", err)
+		}
+
+		ioutil.WriteFile(saveResp, b, 0644)
+		return fmt.Errorf("file written")
 	}
 
 	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {

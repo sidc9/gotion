@@ -6,8 +6,8 @@ import (
 	"os"
 )
 
-func readFile(output interface{}) error {
-	f, err := os.Open("list_db.txt")
+func readFile(output interface{}, filename string) error {
+	f, err := os.Open(filename)
 	if err != nil {
 		return err
 	}
