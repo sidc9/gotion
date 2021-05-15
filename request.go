@@ -10,13 +10,13 @@ import (
 
 var saveResp = ""
 
-func makeRequest(method, path string, body io.Reader, response interface{}) error {
+func (c *Client) makeRequest(method, path string, body io.Reader, response interface{}) error {
 	req, err := http.NewRequest(method, fmt.Sprintf("%s%s", baseURL, path), body)
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
 
-	req.Header.Add("Authorization", "Bearer "+API_KEY)
+	req.Header.Add("Authorization", "Bearer "+c.apiKey)
 	req.Header.Add(API_VERSION_KEY, API_VERSION_VAL)
 
 	resp, err := http.DefaultClient.Do(req)

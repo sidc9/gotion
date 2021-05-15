@@ -10,7 +10,6 @@ import (
 )
 
 var (
-	API_KEY         = ""
 	API_VERSION_KEY = "Notion-Version"
 	API_VERSION_VAL = "2021-05-13"
 	baseURL         = "https://api.notion.com/v1/"
@@ -24,11 +23,14 @@ func main() {
 }
 
 func run() error {
-	if err := loadAPIKey(); err != nil {
+	apiKey, err := loadAPIKey()
+	if err != nil {
 		return err
 	}
 
-	resp, err := ListDatabases()
+	c := NewClient(apiKey)
+
+	resp, err := c.ListDatabases()
 	if err != nil {
 		return err
 	}
@@ -37,14 +39,13 @@ func run() error {
 	return nil
 }
 
-func loadAPIKey() error {
+func loadAPIKey() (string, error) {
 	b, err := ioutil.ReadFile(".env")
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	API_KEY = strings.TrimSuffix(string(b), "\n")
-	return nil
+	return strings.TrimSuffix(string(b), "\n"), nil
 }
 
 type ObjectType interface {

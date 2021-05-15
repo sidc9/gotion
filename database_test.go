@@ -11,7 +11,11 @@ import (
 func TestListDatabases(t *testing.T) {
 	is := is.New(t)
 
-	resp, err := ListDatabases()
+	apiKey, err := loadAPIKey()
+	is.NoErr(err)
+
+	c := NewClient(apiKey)
+	resp, err := c.ListDatabases()
 
 	is.NoErr(err)
 	is.Equal(resp.Object, "list")
