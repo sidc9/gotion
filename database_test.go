@@ -1,12 +1,32 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/kr/pretty"
 	"github.com/matryer/is"
 )
+
+var saveResponse bool
+
+func TestMain(m *testing.M) {
+	flag.BoolVar(&saveResponse, "save", false, "call the real api and save the response")
+	flag.Parse()
+
+	if saveResponse {
+		fmt.Println("-> Calling real api and saving response(s)")
+	}
+
+	code := m.Run()
+	os.Exit(code)
+}
 
 func TestListDatabases(t *testing.T) {
 	is := is.New(t)
@@ -62,31 +82,45 @@ func TestQueryDatabase(t *testing.T) {
 	})
 
 	t.Run("with filter", func(t *testing.T) {
-		/* h := func(w http.ResponseWriter, r *http.Request) {
-			body, err := ioutil.ReadAll(r.Body)
-			is.NoErr(err)
+		var (
+			c   *Client
+			req *http.Request
+		)
 
-			fmt.Println(">>>", string(body))
-			fmt.Println(">>>", r.Method)
-			fmt.Println(">>>", r.URL)
+		saveRespFilename = filepath.Join("testdata", "query_db_with_filter.txt")
 
-			b, err := ioutil.ReadFile("query_db.txt")
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
+		if saveResponse {
+			t.Logf("    * saving to: %s\n", saveRespFilename)
+			c = NewClient(apiKey, "")
+		} else {
+			h := func(w http.ResponseWriter, r *http.Request) {
+				// instead of asserting the request fields here,
+				// save the request and assert in the main test
+				req = r
+
+				b, err := ioutil.ReadFile(saveRespFilename)
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+				w.Write(b)
 			}
-			w.Write(b)
+
+			srv := httptest.NewServer(http.HandlerFunc(h))
+			c = NewClient(apiKey, srv.URL)
 		}
 
-		srv := httptest.NewServer(http.HandlerFunc(h))
-		c := NewClient(apiKey, srv.URL) */
-		c := NewClient(apiKey, "")
-
-		filt := NewFilter("age")
-		filt.Number = NewNumberFilter().GreaterThan(24)
+		filt := NewNumberFilter("age").GreaterThan(24)
 		q := NewDBQuery().WithFilter(filt)
+
 		pages, err := c.QueryDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f", q)
 		is.NoErr(err)
-		pretty.Println(pages)
+		is.Equal(len(pages.Results), 1)
+		// pretty.Println(pages)
+
+		if req != nil {
+			is.Equal(req.Method, http.MethodPost)
+			is.Equal(req.URL, "/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
+		}
 	})
 }

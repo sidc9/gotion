@@ -73,7 +73,7 @@ func (c *Client) QueryDatabase(id string, query *DBQuery) (*PageList, error) {
 	}
 
 	var pgList PageList
-	if err := c.doRequest(http.MethodPost, fmt.Sprintf("databases/%s/query", id), query, &pgList); err != nil {
+	if err := c.doRequest(http.MethodGet, fmt.Sprintf("databases/%s/query", id), query, &pgList); err != nil {
 		// if err := readFile(&pgList, "query_db.txt"); err != nil {
 		return nil, err
 	}
@@ -82,8 +82,8 @@ func (c *Client) QueryDatabase(id string, query *DBQuery) (*PageList, error) {
 }
 
 type DBQuery struct {
-	Filter *Filter `json:"filter,omitempty"`
-	Sorts  *Sort   `json:"sorts,omitempty"`
+	Filter *NumberFilter `json:"filter,omitempty"`
+	Sorts  *Sort         `json:"sorts,omitempty"`
 }
 
 func NewDBQuery() *DBQuery {
@@ -94,7 +94,7 @@ func (q *DBQuery) Do() error {
 	return nil
 }
 
-func (q *DBQuery) WithFilter(filter *Filter) *DBQuery {
+func (q *DBQuery) WithFilter(filter *NumberFilter) *DBQuery {
 	q.Filter = filter
 	return q
 }

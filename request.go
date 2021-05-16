@@ -9,10 +9,10 @@ import (
 )
 
 var (
-	API_VERSION_KEY = "Notion-Version"
-	API_VERSION_VAL = "2021-05-13"
+	API_VERSION_KEY  = "Notion-Version"
+	API_VERSION_VAL  = "2021-05-13"
+	saveRespFilename = ""
 )
-var saveResp = ""
 
 type Response struct {
 	HasMore    bool   `json:"has_more"`
@@ -55,17 +55,25 @@ func (c *Client) makeRequest(method, path string, body interface{}) (*http.Reque
 }
 
 func handleResponse(resp *http.Response, response interface{}) error {
+	var statusErr error
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("http status: %s", resp.Status)
+		statusErr = fmt.Errorf("http status: %s", resp.Status)
 	}
 
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		if statusErr != nil {
+			return statusErr
+		}
 		return fmt.Errorf("failed to read body: %w", err)
 	}
 
-	if saveResp != "" {
-		ioutil.WriteFile(saveResp, b, 0644)
+	if statusErr != nil {
+		return fmt.Errorf("body=%s : %w", b, statusErr)
+	}
+
+	if saveRespFilename != "" {
+		ioutil.WriteFile(saveRespFilename, b, 0644)
 	}
 
 	if err := json.Unmarshal(b, &response); err != nil {
