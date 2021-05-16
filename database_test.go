@@ -110,6 +110,31 @@ func TestQueryDatabase(t *testing.T) {
 			is.Equal(req.URL.String(), "/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
 		}
 	})
+
+	t.Run("with sort", func(t *testing.T) {
+		is := is.NewRelaxed(t)
+		saveRespFilename = filepath.Join("testdata", "query_db_with_sort.txt")
+
+		var req *http.Request
+		c := setup(t, saveRespFilename, req)
+
+		sort := NewPropertySort("age", SortAscending)
+		q := NewDBQuery().WithSorts([]*Sort{sort})
+
+		pages, err := c.QueryDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f", q)
+		is.NoErr(err)
+		is.Equal(len(pages.Results), 2)
+
+		age := pages.Results[0].Properties["age"].(map[string]interface{})
+		is.Equal(age["number"], float64(23))
+		age = pages.Results[1].Properties["age"].(map[string]interface{})
+		is.Equal(age["number"], float64(25))
+
+		if req != nil {
+			is.Equal(req.Method, http.MethodPost)
+			is.Equal(req.URL.String(), "/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
+		}
+	})
 }
 
 func setup(t *testing.T, saveRespFilename string, req *http.Request) *Client {

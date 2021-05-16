@@ -17,10 +17,6 @@ func (*Database) TypeName() string {
 	return ObjectTypeDatabase
 }
 
-func (d *Database) String() string {
-	return ""
-}
-
 type DatabaseList struct {
 	Response
 	Results []*Database `json:"results"`
@@ -30,7 +26,6 @@ func (c *Client) ListDatabases() (*DatabaseList, error) {
 	var dbList DatabaseList
 
 	if err := c.doRequest(http.MethodGet, "databases", nil, &dbList); err != nil {
-		// if err := readFile(&resp, "list_db.txt"); err != nil {
 		return nil, err
 	}
 
@@ -43,8 +38,7 @@ func (c *Client) GetDatabase(id string) (*Database, error) {
 	}
 
 	var db Database
-	// if err := c.doRequest(http.MethodGet, fmt.Sprintf("databases/%s", id), nil, &db); err != nil {
-	if err := loadFile(&db, "get_db.txt"); err != nil {
+	if err := c.doRequest(http.MethodGet, fmt.Sprintf("databases/%s", id), nil, &db); err != nil {
 		return nil, err
 	}
 
@@ -66,7 +60,6 @@ type PageList struct {
 	Results []*Page `json:"results"`
 }
 
-// TODO
 func (c *Client) QueryDatabase(id string, query *DBQuery) (*PageList, error) {
 	if id == "" {
 		return nil, fmt.Errorf("id is required")
@@ -92,7 +85,7 @@ func (c *Client) QueryDatabase(id string, query *DBQuery) (*PageList, error) {
 
 type DBQuery struct {
 	Filter *NumberFilter `json:"filter,omitempty"`
-	Sorts  *Sort         `json:"sorts,omitempty"`
+	Sorts  []*Sort       `json:"sorts,omitempty"`
 }
 
 func NewDBQuery() *DBQuery {
@@ -108,7 +101,7 @@ func (q *DBQuery) WithFilter(filter *NumberFilter) *DBQuery {
 	return q
 }
 
-func (q *DBQuery) WithSort(sort *Sort) *DBQuery {
-	q.Sorts = sort
+func (q *DBQuery) WithSorts(sorts []*Sort) *DBQuery {
+	q.Sorts = sorts
 	return q
 }
