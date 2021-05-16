@@ -1,4 +1,4 @@
-package main
+package gotion
 
 type Client struct {
 	apiKey       string

@@ -1,4 +1,4 @@
-package main
+package gotion
 
 type DatabaseProperties map[string]*DatabaseProperty
 

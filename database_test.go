@@ -1,4 +1,4 @@
-package main
+package gotion_test
 
 import (
 	"flag"
@@ -8,9 +8,11 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/matryer/is"
+	"github.com/sidc9/gotion"
 )
 
 var saveResponse bool
@@ -51,7 +53,7 @@ func TestGetDatabase(t *testing.T) {
 	is := is.New(t)
 
 	t.Run("returns error if id is empty", func(t *testing.T) {
-		c := &Client{}
+		c := &gotion.Client{}
 		db, err := c.GetDatabase("")
 		is.Equal(err, fmt.Errorf("id is required"))
 		is.Equal(db, nil)
@@ -95,8 +97,8 @@ func TestQueryDatabase(t *testing.T) {
 		var req *http.Request
 		c := setup(t, respOut, req)
 
-		filt := NewNumberFilter("age").GreaterThan(24)
-		q := NewDBQuery().WithFilter(filt)
+		filt := gotion.NewNumberFilter("age").GreaterThan(24)
+		q := gotion.NewDBQuery().WithFilter(filt)
 
 		pages, err := c.QueryDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f", q)
 		is.NoErr(err)
@@ -117,8 +119,8 @@ func TestQueryDatabase(t *testing.T) {
 		var req *http.Request
 		c := setup(t, respOut, req)
 
-		sort := NewPropertySort("age", SortAscending)
-		q := NewDBQuery().WithSorts([]*Sort{sort})
+		sort := gotion.NewPropertySort("age", gotion.SortAscending)
+		q := gotion.NewDBQuery().WithSorts([]*gotion.Sort{sort})
 
 		pages, err := c.QueryDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f", q)
 		is.NoErr(err)
@@ -134,17 +136,17 @@ func TestQueryDatabase(t *testing.T) {
 	})
 }
 
-func setup(t *testing.T, saveRespFilename string, req *http.Request) *Client {
+func setup(t *testing.T, saveRespFilename string, req *http.Request) *gotion.Client {
 	is := is.New(t)
 
-	var c *Client
+	var c *gotion.Client
 
 	apiKey, err := loadAPIKey()
 	is.NoErr(err)
 
 	if saveResponse {
 		t.Logf("    * saving to: %s\n", saveRespFilename)
-		c = NewClient(apiKey, "")
+		c = gotion.NewClient(apiKey, "")
 		c.SaveResponse(saveRespFilename)
 	} else {
 		h := func(w http.ResponseWriter, r *http.Request) {
@@ -163,8 +165,17 @@ func setup(t *testing.T, saveRespFilename string, req *http.Request) *Client {
 		srv := httptest.NewServer(http.HandlerFunc(h))
 		// TODO
 		// t.Cleanup(srv.Close)
-		c = NewClient(apiKey, srv.URL)
+		c = gotion.NewClient(apiKey, srv.URL)
 	}
 
 	return c
+}
+
+func loadAPIKey() (string, error) {
+	b, err := ioutil.ReadFile(".env")
+	if err != nil {
+		return "", err
+	}
+
+	return strings.TrimSuffix(string(b), "\n"), nil
 }

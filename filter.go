@@ -1,4 +1,4 @@
-package main
+package gotion
 
 type NumberFilter struct {
 	Property string             `json:"property"`

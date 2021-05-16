@@ -1,4 +1,4 @@
-package main
+package gotion
 
 type Sort struct {
 	Property  string    `json:"property,omitempty"`
