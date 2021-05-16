@@ -6,11 +6,11 @@ import (
 )
 
 type Database struct {
-	CreatedTime    string     `json:"created_time"`
-	ID             string     `json:"id"`
-	LastEditedTime string     `json:"last_edited_time"`
-	Object         string     `json:"object"`
-	Properties     Properties `json:"properties"`
+	CreatedTime    string             `json:"created_time"`
+	ID             string             `json:"id"`
+	LastEditedTime string             `json:"last_edited_time"`
+	Object         string             `json:"object"`
+	Properties     DatabaseProperties `json:"properties"`
 }
 
 func (*Database) TypeName() string {
@@ -50,7 +50,7 @@ type Page struct {
 	ID             string                 `json:"id"`
 	LastEditedTime string                 `json:"last_edited_time"`
 	Object         string                 `json:"object"`
-	Properties     map[string]interface{} `json:"properties"`
+	Properties     PageProperties         `json:"properties"`
 	Archived       bool                   `json:"archived"`
 	Parent         map[string]interface{} `json:"parent"`
 }
@@ -90,10 +90,6 @@ type DBQuery struct {
 
 func NewDBQuery() *DBQuery {
 	return &DBQuery{}
-}
-
-func (q *DBQuery) Do() error {
-	return nil
 }
 
 func (q *DBQuery) WithFilter(filter *NumberFilter) *DBQuery {

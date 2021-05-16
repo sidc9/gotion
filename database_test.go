@@ -65,6 +65,7 @@ func TestGetDatabase(t *testing.T) {
 	is.NoErr(err)
 	is.Equal(db.Object, "database")
 	is.Equal(db.ID, "934c6132-4ea7-485e-9b0d-cf1a083e0f3f")
+	is.Equal(db.Properties["age"].Number.Format, "number")
 
 	// pretty.Println(db)
 }
@@ -100,6 +101,7 @@ func TestQueryDatabase(t *testing.T) {
 		pages, err := c.QueryDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f", q)
 		is.NoErr(err)
 		is.Equal(len(pages.Results), 1)
+		is.Equal(pages.Results[0].Properties["age"].Number, 25)
 		// pretty.Println(pages)
 
 		if req != nil {
@@ -122,10 +124,8 @@ func TestQueryDatabase(t *testing.T) {
 		is.NoErr(err)
 		is.Equal(len(pages.Results), 2)
 
-		age := pages.Results[0].Properties["age"].(map[string]interface{})
-		is.Equal(age["number"], float64(23))
-		age = pages.Results[1].Properties["age"].(map[string]interface{})
-		is.Equal(age["number"], float64(25))
+		is.Equal(pages.Results[0].Properties["age"].Number, 23)
+		is.Equal(pages.Results[1].Properties["age"].Number, 25)
 
 		if req != nil {
 			is.Equal(req.Method, http.MethodPost)
