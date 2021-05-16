@@ -69,46 +69,30 @@ func TestGetDatabase(t *testing.T) {
 }
 
 func TestQueryDatabase(t *testing.T) {
-	is := is.New(t)
-
-	apiKey, err := loadAPIKey()
-	is.NoErr(err)
-
 	t.Run("simple query", func(t *testing.T) {
-		c := NewClient(apiKey, "")
+		is := is.NewRelaxed(t)
+
+		saveRespFilename = filepath.Join("testdata", "query_db.txt")
+
+		var req *http.Request
+		c := setup(t, saveRespFilename, req)
+
 		pages, err := c.QueryDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f", nil)
 		is.NoErr(err)
-		pretty.Println(pages)
+		is.Equal(len(pages.Results), 2)
+		// pretty.Println(pages)
+		if req != nil {
+			is.Equal(req.Method, http.MethodPost)
+			is.Equal(req.URL.String(), "/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
+		}
 	})
 
 	t.Run("with filter", func(t *testing.T) {
-		var (
-			c   *Client
-			req *http.Request
-		)
-
+		is := is.NewRelaxed(t)
 		saveRespFilename = filepath.Join("testdata", "query_db_with_filter.txt")
 
-		if saveResponse {
-			t.Logf("    * saving to: %s\n", saveRespFilename)
-			c = NewClient(apiKey, "")
-		} else {
-			h := func(w http.ResponseWriter, r *http.Request) {
-				// instead of asserting the request fields here,
-				// save the request and assert in the main test
-				req = r
-
-				b, err := ioutil.ReadFile(saveRespFilename)
-				if err != nil {
-					http.Error(w, err.Error(), http.StatusInternalServerError)
-					return
-				}
-				w.Write(b)
-			}
-
-			srv := httptest.NewServer(http.HandlerFunc(h))
-			c = NewClient(apiKey, srv.URL)
-		}
+		var req *http.Request
+		c := setup(t, saveRespFilename, req)
 
 		filt := NewNumberFilter("age").GreaterThan(24)
 		q := NewDBQuery().WithFilter(filt)
@@ -120,7 +104,41 @@ func TestQueryDatabase(t *testing.T) {
 
 		if req != nil {
 			is.Equal(req.Method, http.MethodPost)
-			is.Equal(req.URL, "/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
+			is.Equal(req.URL.String(), "/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
 		}
 	})
+}
+
+func setup(t *testing.T, saveRespFilename string, req *http.Request) *Client {
+	is := is.New(t)
+
+	var c *Client
+
+	apiKey, err := loadAPIKey()
+	is.NoErr(err)
+
+	if saveResponse {
+		t.Logf("    * saving to: %s\n", saveRespFilename)
+		c = NewClient(apiKey, "")
+	} else {
+		h := func(w http.ResponseWriter, r *http.Request) {
+			// instead of asserting the request fields here,
+			// save the request and assert in the main test
+			req = r
+
+			b, err := ioutil.ReadFile(saveRespFilename)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			w.Write(b)
+		}
+
+		srv := httptest.NewServer(http.HandlerFunc(h))
+		// TODO
+		// t.Cleanup(srv.Close)
+		c = NewClient(apiKey, srv.URL)
+	}
+
+	return c
 }

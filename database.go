@@ -72,9 +72,18 @@ func (c *Client) QueryDatabase(id string, query *DBQuery) (*PageList, error) {
 		return nil, fmt.Errorf("id is required")
 	}
 
-	var pgList PageList
-	if err := c.doRequest(http.MethodGet, fmt.Sprintf("databases/%s/query", id), query, &pgList); err != nil {
-		// if err := readFile(&pgList, "query_db.txt"); err != nil {
+	var (
+		pgList PageList
+		err    error
+	)
+
+	if query == nil {
+		err = c.doRequest(http.MethodPost, fmt.Sprintf("databases/%s/query", id), nil, &pgList)
+	} else {
+		err = c.doRequest(http.MethodPost, fmt.Sprintf("databases/%s/query", id), query, &pgList)
+	}
+
+	if err != nil {
 		return nil, err
 	}
 

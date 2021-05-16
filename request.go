@@ -36,13 +36,23 @@ func (c *Client) doRequest(method, path string, body interface{}, response inter
 }
 
 func (c *Client) makeRequest(method, path string, body interface{}) (*http.Request, error) {
-	b, err := json.Marshal(body)
-	if err != nil {
-		return nil, fmt.Errorf("failed to json marshal body: %w", err)
-	}
-	buf := bytes.NewBuffer(b)
+	var (
+		buf *bytes.Buffer
+		req *http.Request
+		err error
+	)
 
-	req, err := http.NewRequest(method, fmt.Sprintf("%s/%s", c.baseURL, path), buf)
+	if body != nil {
+		b, err := json.Marshal(body)
+		if err != nil {
+			return nil, fmt.Errorf("failed to json marshal body: %w", err)
+		}
+		buf = bytes.NewBuffer(b)
+		req, err = http.NewRequest(method, fmt.Sprintf("%s/%s", c.baseURL, path), buf)
+	} else {
+		req, err = http.NewRequest(method, fmt.Sprintf("%s/%s", c.baseURL, path), nil)
+	}
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
