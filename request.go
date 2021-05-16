@@ -9,9 +9,8 @@ import (
 )
 
 var (
-	API_VERSION_KEY  = "Notion-Version"
-	API_VERSION_VAL  = "2021-05-13"
-	saveRespFilename = ""
+	API_VERSION_KEY = "Notion-Version"
+	API_VERSION_VAL = "2021-05-13"
 )
 
 type Response struct {
@@ -32,7 +31,7 @@ func (c *Client) doRequest(method, path string, body interface{}, response inter
 		return err
 	}
 
-	return handleResponse(resp, response)
+	return c.handleResponse(resp, response)
 }
 
 func (c *Client) makeRequest(method, path string, body interface{}) (*http.Request, error) {
@@ -64,7 +63,7 @@ func (c *Client) makeRequest(method, path string, body interface{}) (*http.Reque
 	return req, nil
 }
 
-func handleResponse(resp *http.Response, response interface{}) error {
+func (c *Client) handleResponse(resp *http.Response, response interface{}) error {
 	var statusErr error
 	if resp.StatusCode != http.StatusOK {
 		statusErr = fmt.Errorf("http status: %s", resp.Status)
@@ -82,8 +81,8 @@ func handleResponse(resp *http.Response, response interface{}) error {
 		return fmt.Errorf("body=%s : %w", b, statusErr)
 	}
 
-	if saveRespFilename != "" {
-		ioutil.WriteFile(saveRespFilename, b, 0644)
+	if c.responseFile != "" {
+		ioutil.WriteFile(c.responseFile, b, 0644)
 	}
 
 	if err := json.Unmarshal(b, &response); err != nil {

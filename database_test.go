@@ -30,10 +30,9 @@ func TestMain(m *testing.M) {
 func TestListDatabases(t *testing.T) {
 	is := is.New(t)
 
-	saveRespFilename = filepath.Join("testdata", "list_db.txt")
-
+	respOut := filepath.Join("testdata", "list_db.txt")
 	var req *http.Request
-	c := setup(t, saveRespFilename, req)
+	c := setup(t, respOut, req)
 	resp, err := c.ListDatabases()
 
 	is.NoErr(err)
@@ -46,7 +45,6 @@ func TestListDatabases(t *testing.T) {
 	item := resp.Results[0]
 	is.Equal(item.Object, "database")
 	// pretty.Println(item.Properties)
-
 }
 
 func TestGetDatabase(t *testing.T) {
@@ -59,10 +57,10 @@ func TestGetDatabase(t *testing.T) {
 		is.Equal(db, nil)
 	})
 
-	saveRespFilename = filepath.Join("testdata", "get_db.txt")
-
+	respOut := filepath.Join("testdata", "get_db.txt")
 	var req *http.Request
-	c := setup(t, saveRespFilename, req)
+	c := setup(t, respOut, req)
+
 	db, err := c.GetDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f")
 	is.NoErr(err)
 	is.Equal(db.Object, "database")
@@ -75,10 +73,9 @@ func TestQueryDatabase(t *testing.T) {
 	t.Run("simple query", func(t *testing.T) {
 		is := is.NewRelaxed(t)
 
-		saveRespFilename = filepath.Join("testdata", "query_db.txt")
-
+		respOut := filepath.Join("testdata", "query_db.txt")
 		var req *http.Request
-		c := setup(t, saveRespFilename, req)
+		c := setup(t, respOut, req)
 
 		pages, err := c.QueryDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f", nil)
 		is.NoErr(err)
@@ -92,10 +89,10 @@ func TestQueryDatabase(t *testing.T) {
 
 	t.Run("with filter", func(t *testing.T) {
 		is := is.NewRelaxed(t)
-		saveRespFilename = filepath.Join("testdata", "query_db_with_filter.txt")
 
+		respOut := filepath.Join("testdata", "query_db_with_filter.txt")
 		var req *http.Request
-		c := setup(t, saveRespFilename, req)
+		c := setup(t, respOut, req)
 
 		filt := NewNumberFilter("age").GreaterThan(24)
 		q := NewDBQuery().WithFilter(filt)
@@ -113,10 +110,10 @@ func TestQueryDatabase(t *testing.T) {
 
 	t.Run("with sort", func(t *testing.T) {
 		is := is.NewRelaxed(t)
-		saveRespFilename = filepath.Join("testdata", "query_db_with_sort.txt")
 
+		respOut := filepath.Join("testdata", "query_db_with_sort.txt")
 		var req *http.Request
-		c := setup(t, saveRespFilename, req)
+		c := setup(t, respOut, req)
 
 		sort := NewPropertySort("age", SortAscending)
 		q := NewDBQuery().WithSorts([]*Sort{sort})
@@ -148,6 +145,7 @@ func setup(t *testing.T, saveRespFilename string, req *http.Request) *Client {
 	if saveResponse {
 		t.Logf("    * saving to: %s\n", saveRespFilename)
 		c = NewClient(apiKey, "")
+		c.SaveResponse(saveRespFilename)
 	} else {
 		h := func(w http.ResponseWriter, r *http.Request) {
 			// instead of asserting the request fields here,
