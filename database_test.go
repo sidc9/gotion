@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/kr/pretty"
 	"github.com/matryer/is"
 )
 
@@ -31,10 +30,10 @@ func TestMain(m *testing.M) {
 func TestListDatabases(t *testing.T) {
 	is := is.New(t)
 
-	apiKey, err := loadAPIKey()
-	is.NoErr(err)
+	saveRespFilename = filepath.Join("testdata", "list_db.txt")
 
-	c := NewClient(apiKey, "")
+	var req *http.Request
+	c := setup(t, saveRespFilename, req)
 	resp, err := c.ListDatabases()
 
 	is.NoErr(err)
@@ -46,26 +45,30 @@ func TestListDatabases(t *testing.T) {
 
 	item := resp.Results[0]
 	is.Equal(item.Object, "database")
-	pretty.Println(item.Properties)
+	// pretty.Println(item.Properties)
 
 }
 
 func TestGetDatabase(t *testing.T) {
 	is := is.New(t)
 
-	c := &Client{}
 	t.Run("returns error if id is empty", func(t *testing.T) {
+		c := &Client{}
 		db, err := c.GetDatabase("")
 		is.Equal(err, fmt.Errorf("id is required"))
 		is.Equal(db, nil)
 	})
 
+	saveRespFilename = filepath.Join("testdata", "get_db.txt")
+
+	var req *http.Request
+	c := setup(t, saveRespFilename, req)
 	db, err := c.GetDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f")
 	is.NoErr(err)
 	is.Equal(db.Object, "database")
 	is.Equal(db.ID, "934c6132-4ea7-485e-9b0d-cf1a083e0f3f")
 
-	pretty.Println(db)
+	// pretty.Println(db)
 }
 
 func TestQueryDatabase(t *testing.T) {
