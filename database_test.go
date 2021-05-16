@@ -73,6 +73,7 @@ func TestGetDatabase(t *testing.T) {
 	is.Equal(db.Properties["hobbies"].MultiSelect.Options[0].Name, "reading")
 	is.Equal(db.Properties["hobbies"].MultiSelect.Options[1].Name, "cycling")
 	is.Equal(db.Properties["hobbies"].MultiSelect.Options[2].Name, "swimming")
+	is.Equal(db.Properties["description"].RichText, map[string]interface{}{})
 
 	// pretty.Println(db)
 }
