@@ -9,12 +9,6 @@ import (
 	"github.com/kr/pretty"
 )
 
-var (
-	API_VERSION_KEY = "Notion-Version"
-	API_VERSION_VAL = "2021-05-13"
-	baseURL         = "https://api.notion.com/v1/"
-)
-
 func main() {
 	if err := run(); err != nil {
 		log.Println(err)
@@ -28,7 +22,7 @@ func run() error {
 		return err
 	}
 
-	c := NewClient(apiKey)
+	c := NewClient(apiKey, "")
 
 	resp, err := c.ListDatabases()
 	if err != nil {

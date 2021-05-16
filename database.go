@@ -29,7 +29,7 @@ type DatabaseList struct {
 func (c *Client) ListDatabases() (*DatabaseList, error) {
 	var dbList DatabaseList
 
-	if err := c.makeRequest(http.MethodGet, "databases", nil, &dbList); err != nil {
+	if err := c.doRequest(http.MethodGet, "databases", nil, &dbList); err != nil {
 		// if err := readFile(&resp, "list_db.txt"); err != nil {
 		return nil, err
 	}
@@ -43,8 +43,8 @@ func (c *Client) GetDatabase(id string) (*Database, error) {
 	}
 
 	var db Database
-	// if err := c.makeRequest(http.MethodGet, fmt.Sprintf("databases/%s", id), nil, &db); err != nil {
-	if err := readFile(&db, "get_db.txt"); err != nil {
+	// if err := c.doRequest(http.MethodGet, fmt.Sprintf("databases/%s", id), nil, &db); err != nil {
+	if err := loadFile(&db, "get_db.txt"); err != nil {
 		return nil, err
 	}
 
@@ -73,7 +73,7 @@ func (c *Client) QueryDatabase(id string, query *DBQuery) (*PageList, error) {
 	}
 
 	var pgList PageList
-	if err := c.makeRequest(http.MethodPost, fmt.Sprintf("databases/%s/query", id), query, &pgList); err != nil {
+	if err := c.doRequest(http.MethodPost, fmt.Sprintf("databases/%s/query", id), query, &pgList); err != nil {
 		// if err := readFile(&pgList, "query_db.txt"); err != nil {
 		return nil, err
 	}

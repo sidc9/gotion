@@ -1,11 +1,19 @@
 package main
 
 type Client struct {
-	apiKey string
+	apiKey  string
+	baseURL string
 }
 
-func NewClient(apiKey string) *Client {
+const defaultURL = "https://api.notion.com/v1"
+
+func NewClient(apiKey, baseURL string) *Client {
+	if baseURL == "" {
+		baseURL = defaultURL
+	}
+
 	return &Client{
-		apiKey: apiKey,
+		apiKey:  apiKey,
+		baseURL: baseURL,
 	}
 }

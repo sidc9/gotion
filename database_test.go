@@ -14,7 +14,7 @@ func TestListDatabases(t *testing.T) {
 	apiKey, err := loadAPIKey()
 	is.NoErr(err)
 
-	c := NewClient(apiKey)
+	c := NewClient(apiKey, "")
 	resp, err := c.ListDatabases()
 
 	is.NoErr(err)
@@ -54,15 +54,34 @@ func TestQueryDatabase(t *testing.T) {
 	apiKey, err := loadAPIKey()
 	is.NoErr(err)
 
-	c := NewClient(apiKey)
-
 	t.Run("simple query", func(t *testing.T) {
+		c := NewClient(apiKey, "")
 		pages, err := c.QueryDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f", nil)
 		is.NoErr(err)
 		pretty.Println(pages)
 	})
 
 	t.Run("with filter", func(t *testing.T) {
+		/* h := func(w http.ResponseWriter, r *http.Request) {
+			body, err := ioutil.ReadAll(r.Body)
+			is.NoErr(err)
+
+			fmt.Println(">>>", string(body))
+			fmt.Println(">>>", r.Method)
+			fmt.Println(">>>", r.URL)
+
+			b, err := ioutil.ReadFile("query_db.txt")
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			w.Write(b)
+		}
+
+		srv := httptest.NewServer(http.HandlerFunc(h))
+		c := NewClient(apiKey, srv.URL) */
+		c := NewClient(apiKey, "")
+
 		filt := NewFilter("age")
 		filt.Number = NewNumberFilter().GreaterThan(24)
 		q := NewDBQuery().WithFilter(filt)

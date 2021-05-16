@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func readFile(output interface{}, filename string) error {
+func loadFile(output interface{}, filename string) error {
 	f, err := os.Open(filename)
 	if err != nil {
 		return err

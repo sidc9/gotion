@@ -1,12 +1,6 @@
 package main
 
-import (
-	"testing"
-
-	"github.com/matryer/is"
-)
-
-func TestFilter(t *testing.T) {
+/* func TestFilter(t *testing.T) {
 	is := is.New(t)
 
 	t.Run("number filter", func(t *testing.T) {
@@ -52,4 +46,4 @@ func TestFilter(t *testing.T) {
 		is.Equal(c.Property, "available")
 		is.True(c.ParamEquals)
 	})
-}
+} */
