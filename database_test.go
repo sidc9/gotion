@@ -68,6 +68,11 @@ func TestGetDatabase(t *testing.T) {
 	is.Equal(db.Object, "database")
 	is.Equal(db.ID, "934c6132-4ea7-485e-9b0d-cf1a083e0f3f")
 	is.Equal(db.Properties["age"].Number.Format, "number")
+	is.Equal(db.Properties["gender"].Select.Options[0].Name, "male")
+	is.Equal(db.Properties["gender"].Select.Options[1].Name, "female")
+	is.Equal(db.Properties["hobbies"].MultiSelect.Options[0].Name, "reading")
+	is.Equal(db.Properties["hobbies"].MultiSelect.Options[1].Name, "cycling")
+	is.Equal(db.Properties["hobbies"].MultiSelect.Options[2].Name, "swimming")
 
 	// pretty.Println(db)
 }
