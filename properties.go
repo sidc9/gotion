@@ -4,6 +4,7 @@ type DatabaseProperties map[string]*DatabaseProperty
 
 type DatabaseProperty struct {
 	Name        string                 `json:"-"`
+	Title       []Title                `json:"title"`
 	ID          string                 `json:"id"`
 	Type        string                 `json:"type"`
 	Number      DBPropNumber           `json:"number"`

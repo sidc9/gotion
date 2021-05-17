@@ -46,7 +46,6 @@ func TestListDatabases(t *testing.T) {
 
 	item := resp.Results[0]
 	is.Equal(item.Object, "database")
-	// pretty.Println(item.Properties)
 }
 
 func TestGetDatabase(t *testing.T) {
@@ -74,8 +73,6 @@ func TestGetDatabase(t *testing.T) {
 	is.Equal(db.Properties["hobbies"].MultiSelect.Options[1].Name, "cycling")
 	is.Equal(db.Properties["hobbies"].MultiSelect.Options[2].Name, "swimming")
 	is.Equal(db.Properties["description"].RichText, map[string]interface{}{})
-
-	// pretty.Println(db)
 }
 
 func TestQueryDatabase(t *testing.T) {
@@ -110,7 +107,6 @@ func TestQueryDatabase(t *testing.T) {
 		is.NoErr(err)
 		is.Equal(len(pages.Results), 1)
 		is.Equal(pages.Results[0].Properties["age"].Number, 25)
-		// pretty.Println(pages)
 
 		if req != nil {
 			is.Equal(req.Method, http.MethodPost)
