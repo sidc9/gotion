@@ -89,7 +89,7 @@ func TestQueryDatabase(t *testing.T) {
 		pages, err := c.QueryDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f", nil)
 		is.NoErr(err)
 		is.Equal(len(pages.Results), 2)
-		// pretty.Println(pages)
+
 		if req != nil {
 			is.Equal(req.Method, http.MethodPost)
 			is.Equal(req.URL.String(), "/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
@@ -132,8 +132,23 @@ func TestQueryDatabase(t *testing.T) {
 		is.NoErr(err)
 		is.Equal(len(pages.Results), 2)
 
-		is.Equal(pages.Results[0].Properties["age"].Number, 23)
-		is.Equal(pages.Results[1].Properties["age"].Number, 25)
+		item1 := pages.Results[0]
+		item2 := pages.Results[1]
+
+		is.Equal(item1.Properties["name"].Title[0].PlainText, "john")
+		is.Equal(item2.Properties["name"].Title[0].PlainText, "mary")
+		is.Equal(item1.Properties["age"].Number, 23)
+		is.Equal(item2.Properties["age"].Number, 25)
+		is.Equal(item1.Properties["description"].RichText[0].PlainText, "his name is john")
+		is.Equal(item1.Properties["description"].RichText[0].Text.Content, "his name is john")
+		is.Equal(item2.Properties["description"].RichText[0].PlainText, "her name is mary")
+		is.Equal(item2.Properties["description"].RichText[0].Text.Content, "her name is mary")
+		is.Equal(item1.Properties["gender"].Select.Name, "male")
+		is.Equal(item2.Properties["gender"].Select.Name, "female")
+		is.Equal(item1.Properties["hobbies"].MultiSelect[0].Name, "reading")
+		is.Equal(item1.Properties["hobbies"].MultiSelect[1].Name, "cycling")
+		is.Equal(item2.Properties["hobbies"].MultiSelect[0].Name, "cycling")
+		is.Equal(item2.Properties["hobbies"].MultiSelect[1].Name, "swimming")
 
 		if req != nil {
 			is.Equal(req.Method, http.MethodPost)
