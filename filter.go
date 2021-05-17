@@ -12,14 +12,29 @@ func NewNumberFilter(property string) *NumberFilter {
 }
 
 type numberFilterParam struct {
+	Equals       *int `json:"equals,omitempty"`
+	DoesNotEqual *int `json:"does_not_equal,omitempty"`
+
+	GreaterThan *int `json:"greater_than,omitempty"`
+	LessThan    *int `json:"less_than,omitempty"`
+
 	GreaterThanOrEqual *int `json:"greater_than_or_equal_to,omitempty"`
-	GreaterThan        *int `json:"greater_than,omitempty"`
-	Equals             *int `json:"equals,omitempty"`
+	LessThanOrEqual    *int `json:"less_than_or_equal_to,omitempty"`
+
+	IsEmpty    *bool `json:"is_empty"`
+	IsNotEmpty *bool `json:"is_not_empty"`
 }
 
-func (nf *NumberFilter) GreaterThanOrEqual(n int) *NumberFilter {
+func (nf *NumberFilter) Equals(n int) *NumberFilter {
 	nf.Number = &numberFilterParam{
-		GreaterThanOrEqual: &n,
+		Equals: &n,
+	}
+	return nf
+}
+
+func (nf *NumberFilter) DoesNotEqual(n int) *NumberFilter {
+	nf.Number = &numberFilterParam{
+		DoesNotEqual: &n,
 	}
 	return nf
 }
@@ -31,11 +46,43 @@ func (nf *NumberFilter) GreaterThan(n int) *NumberFilter {
 	return nf
 }
 
-func (nf *NumberFilter) Equals(n int) *NumberFilter {
+func (nf *NumberFilter) LessThan(n int) *NumberFilter {
 	nf.Number = &numberFilterParam{
-		Equals: &n,
+		LessThan: &n,
 	}
 	return nf
+}
+
+func (nf *NumberFilter) GreaterThanOrEqual(n int) *NumberFilter {
+	nf.Number = &numberFilterParam{
+		GreaterThanOrEqual: &n,
+	}
+	return nf
+}
+
+func (nf *NumberFilter) LessThanOrEqual(n int) *NumberFilter {
+	nf.Number = &numberFilterParam{
+		LessThanOrEqual: &n,
+	}
+	return nf
+}
+
+func (nf *NumberFilter) IsEmpty() *NumberFilter {
+	nf.Number = &numberFilterParam{
+		IsEmpty: boolptr(true),
+	}
+	return nf
+}
+
+func (nf *NumberFilter) IsNotEmpty() *NumberFilter {
+	nf.Number = &numberFilterParam{
+		IsNotEmpty: boolptr(true),
+	}
+	return nf
+}
+
+func boolptr(b bool) *bool {
+	return &b
 }
 
 /* type CheckboxFilter struct {
