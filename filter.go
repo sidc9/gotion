@@ -3,9 +3,6 @@ package gotion
 type NumberFilter struct {
 	Property string             `json:"property"`
 	Number   *numberFilterParam `json:"number,omitempty"`
-
-	// prevents setting of more than 1 param
-	paramSet bool `json:"-"`
 }
 
 func NewNumberFilter(property string) *NumberFilter {
@@ -21,40 +18,23 @@ type numberFilterParam struct {
 }
 
 func (nf *NumberFilter) GreaterThanOrEqual(n int) *NumberFilter {
-	if nf.paramSet {
-		return nf
-	}
-
 	nf.Number = &numberFilterParam{
 		GreaterThanOrEqual: &n,
 	}
-
-	nf.paramSet = true
 	return nf
 }
 
 func (nf *NumberFilter) GreaterThan(n int) *NumberFilter {
-	if nf.paramSet {
-		return nf
-	}
-
 	nf.Number = &numberFilterParam{
 		GreaterThan: &n,
 	}
-
-	nf.paramSet = true
 	return nf
 }
 
 func (nf *NumberFilter) Equals(n int) *NumberFilter {
-	if nf.paramSet {
-		return nf
-	}
-
 	nf.Number = &numberFilterParam{
 		Equals: &n,
 	}
-	nf.paramSet = true
 	return nf
 }
 

@@ -28,23 +28,5 @@ func TestFilter(t *testing.T) {
 			is.Equal(*nf.Number.Equals, 2)
 			is.Equal(nf.Property, "age")
 		})
-
-		t.Run("does not set greaterThanOrEqual if something else is already set", func(t *testing.T) {
-			nf := gotion.NewNumberFilter("age").Equals(5)
-			nf.GreaterThanOrEqual(2)
-			is.Equal(*nf.Number.Equals, 5)
-		})
-
-		t.Run("does not set greaterThan if something else is already set", func(t *testing.T) {
-			nf := gotion.NewNumberFilter("age").GreaterThanOrEqual(5)
-			nf.GreaterThan(2)
-			is.Equal(*nf.Number.GreaterThanOrEqual, 5)
-		})
-
-		t.Run("does not set Equals if something else is already set", func(t *testing.T) {
-			nf := gotion.NewNumberFilter("age").GreaterThan(5)
-			nf.Equals(2)
-			is.Equal(*nf.Number.GreaterThan, 5)
-		})
 	})
 }
