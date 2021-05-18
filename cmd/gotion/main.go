@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/kr/pretty"
+	"github.com/sidc9/gotion"
 )
 
 func main() {
@@ -22,7 +23,7 @@ func run() error {
 		return err
 	}
 
-	c := NewClient(apiKey, "")
+	c := gotion.NewClient(apiKey, gotion.DefaultURL)
 
 	resp, err := c.ListDatabases()
 	if err != nil {

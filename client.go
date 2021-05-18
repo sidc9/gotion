@@ -6,11 +6,11 @@ type Client struct {
 	responseFile string
 }
 
-const defaultURL = "https://api.notion.com/v1"
+const DefaultURL = "https://api.notion.com/v1"
 
 func NewClient(apiKey, baseURL string) *Client {
 	if baseURL == "" {
-		baseURL = defaultURL
+		baseURL = DefaultURL
 	}
 
 	return &Client{
