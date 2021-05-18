@@ -1,4 +1,4 @@
-coverage: 
+cover: 
 	go test -cover ./...
 
 test: 

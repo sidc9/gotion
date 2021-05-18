@@ -17,7 +17,6 @@ type Response struct {
 	HasMore    bool   `json:"has_more"`
 	NextCursor string `json:"next_cursor"`
 	Object     string `json:"object"`
-	// Results    interface{} `json:"results"`
 }
 
 func (c *Client) doRequest(method, path string, body interface{}, response interface{}) error {
