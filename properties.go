@@ -93,5 +93,3 @@ type Annotation struct {
 	Code          bool   `json:"code"`
 	Color         string `json:"color"`
 }
-
-// "name":{"id":"title","type":"title","title":[{"type":"text","text":{"content":"mary","link":null},"annotations":{"bold":false,"italic":false,"strikethrough":false,"underline":false,"code":false,"color":"default"},"plain_text":"mary","href":null}]}

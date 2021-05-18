@@ -77,6 +77,14 @@ func TestGetDatabase(t *testing.T) {
 }
 
 func TestQueryDatabase(t *testing.T) {
+	t.Run("returns error if id is empty", func(t *testing.T) {
+		is := is.New(t)
+		c := &gotion.Client{}
+		db, err := c.QueryDatabase("", nil)
+		is.Equal(err, fmt.Errorf("id is required"))
+		is.Equal(db, nil)
+	})
+
 	t.Run("simple query", func(t *testing.T) {
 		is := is.NewRelaxed(t)
 
