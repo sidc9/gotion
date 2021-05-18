@@ -3,6 +3,8 @@ package gotion
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/sidc9/gotion/filter"
 )
 
 type Database struct {
@@ -84,15 +86,15 @@ func (c *Client) QueryDatabase(id string, query *DBQuery) (*PageList, error) {
 }
 
 type DBQuery struct {
-	Filter *NumberFilter `json:"filter,omitempty"`
-	Sorts  []*Sort       `json:"sorts,omitempty"`
+	Filter *filter.NumberFilter `json:"filter,omitempty"`
+	Sorts  []*Sort              `json:"sorts,omitempty"`
 }
 
 func NewDBQuery() *DBQuery {
 	return &DBQuery{}
 }
 
-func (q *DBQuery) WithFilter(filter *NumberFilter) *DBQuery {
+func (q *DBQuery) WithFilter(filter *filter.NumberFilter) *DBQuery {
 	q.Filter = filter
 	return q
 }

@@ -13,6 +13,7 @@ import (
 
 	"github.com/matryer/is"
 	"github.com/sidc9/gotion"
+	"github.com/sidc9/gotion/filter"
 )
 
 var saveResponse bool
@@ -100,7 +101,7 @@ func TestQueryDatabase(t *testing.T) {
 		var req *http.Request
 		c := setup(t, respOut, req)
 
-		filt := gotion.NewNumberFilter("age").GreaterThan(24)
+		filt := filter.NewNumberFilter("age").GreaterThan(24)
 		q := gotion.NewDBQuery().WithFilter(filt)
 
 		pages, err := c.QueryDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f", q)

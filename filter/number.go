@@ -1,4 +1,4 @@
-package gotion
+package filter
 
 type NumberFilter struct {
 	Property string             `json:"property"`
@@ -68,33 +68,17 @@ func (nf *NumberFilter) LessThanOrEqual(n int) *NumberFilter {
 }
 
 func (nf *NumberFilter) IsEmpty() *NumberFilter {
+	b := true
 	nf.Number = &numberFilterParam{
-		IsEmpty: boolptr(true),
+		IsEmpty: &b,
 	}
 	return nf
 }
 
 func (nf *NumberFilter) IsNotEmpty() *NumberFilter {
+	b := true
 	nf.Number = &numberFilterParam{
-		IsNotEmpty: boolptr(true),
+		IsNotEmpty: &b,
 	}
 	return nf
 }
-
-func boolptr(b bool) *bool {
-	return &b
-}
-
-/* type CheckboxFilter struct {
-	Property    string `json:"property"`
-	ParamEquals bool   `json:"equals"`
-}
-
-func NewCheckboxFilter(property string) *CheckboxFilter {
-	return &CheckboxFilter{Property: property}
-}
-
-func (c *CheckboxFilter) Equals(eq bool) *CheckboxFilter {
-	c.ParamEquals = eq
-	return c
-} */
