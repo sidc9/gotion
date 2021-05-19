@@ -3,6 +3,7 @@ package filter
 type CheckboxFilter struct {
 	Property string               `json:"property"`
 	Checkbox *checkboxFilterParam `json:"checkbox,omitempty"`
+	isSet    bool                 `json:"-"`
 }
 
 type checkboxFilterParam struct {
@@ -18,6 +19,7 @@ func (cf *CheckboxFilter) Equals(b bool) *CheckboxFilter {
 	cf.Checkbox = &checkboxFilterParam{
 		Equals: &b,
 	}
+	cf.isSet = true
 	return cf
 }
 
@@ -25,5 +27,10 @@ func (cf *CheckboxFilter) DoesNotEqual(b bool) *CheckboxFilter {
 	cf.Checkbox = &checkboxFilterParam{
 		DoesNotEqual: &b,
 	}
+	cf.isSet = true
 	return cf
+}
+
+func (cf *CheckboxFilter) IsValid() bool {
+	return cf.isSet
 }

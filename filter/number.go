@@ -3,12 +3,17 @@ package filter
 type NumberFilter struct {
 	Property string             `json:"property"`
 	Number   *numberFilterParam `json:"number,omitempty"`
+	isSet    bool               `json:"-"`
 }
 
 func NewNumberFilter(property string) *NumberFilter {
 	return &NumberFilter{
 		Property: property,
 	}
+}
+
+func (nf *NumberFilter) IsValid() bool {
+	return nf.isSet
 }
 
 type numberFilterParam struct {
@@ -29,6 +34,7 @@ func (nf *NumberFilter) Equals(n int) *NumberFilter {
 	nf.Number = &numberFilterParam{
 		Equals: &n,
 	}
+	nf.isSet = true
 	return nf
 }
 
@@ -36,6 +42,7 @@ func (nf *NumberFilter) DoesNotEqual(n int) *NumberFilter {
 	nf.Number = &numberFilterParam{
 		DoesNotEqual: &n,
 	}
+	nf.isSet = true
 	return nf
 }
 
@@ -43,6 +50,7 @@ func (nf *NumberFilter) GreaterThan(n int) *NumberFilter {
 	nf.Number = &numberFilterParam{
 		GreaterThan: &n,
 	}
+	nf.isSet = true
 	return nf
 }
 
@@ -50,6 +58,7 @@ func (nf *NumberFilter) LessThan(n int) *NumberFilter {
 	nf.Number = &numberFilterParam{
 		LessThan: &n,
 	}
+	nf.isSet = true
 	return nf
 }
 
@@ -57,6 +66,7 @@ func (nf *NumberFilter) GreaterThanOrEqual(n int) *NumberFilter {
 	nf.Number = &numberFilterParam{
 		GreaterThanOrEqual: &n,
 	}
+	nf.isSet = true
 	return nf
 }
 
@@ -64,6 +74,7 @@ func (nf *NumberFilter) LessThanOrEqual(n int) *NumberFilter {
 	nf.Number = &numberFilterParam{
 		LessThanOrEqual: &n,
 	}
+	nf.isSet = true
 	return nf
 }
 
@@ -72,6 +83,7 @@ func (nf *NumberFilter) IsEmpty() *NumberFilter {
 	nf.Number = &numberFilterParam{
 		IsEmpty: &b,
 	}
+	nf.isSet = true
 	return nf
 }
 
@@ -80,5 +92,6 @@ func (nf *NumberFilter) IsNotEmpty() *NumberFilter {
 	nf.Number = &numberFilterParam{
 		IsNotEmpty: &b,
 	}
+	nf.isSet = true
 	return nf
 }

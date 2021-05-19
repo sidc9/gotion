@@ -189,8 +189,7 @@ func setup(t *testing.T, saveRespFilename string, req *http.Request) *gotion.Cli
 		}
 
 		srv := httptest.NewServer(http.HandlerFunc(h))
-		// TODO
-		// t.Cleanup(srv.Close)
+		t.Cleanup(srv.Close)
 		c = gotion.NewClient(apiKey, srv.URL)
 	}
 
