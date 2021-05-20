@@ -4,6 +4,7 @@ type NumberFilter struct {
 	Property string             `json:"property"`
 	Number   *numberFilterParam `json:"number,omitempty"`
 	isSet    bool               `json:"-"`
+	param    string             `json:"-"`
 }
 
 func NewNumberFilter(property string) *NumberFilter {
@@ -26,8 +27,8 @@ type numberFilterParam struct {
 	GreaterThanOrEqual *int `json:"greater_than_or_equal_to,omitempty"`
 	LessThanOrEqual    *int `json:"less_than_or_equal_to,omitempty"`
 
-	IsEmpty    *bool `json:"is_empty"`
-	IsNotEmpty *bool `json:"is_not_empty"`
+	IsEmpty    *bool `json:"is_empty,omitempty"`
+	IsNotEmpty *bool `json:"is_not_empty,omitempty"`
 }
 
 func (nf *NumberFilter) Equals(n int) *NumberFilter {

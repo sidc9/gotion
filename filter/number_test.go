@@ -1,6 +1,7 @@
 package filter_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/matryer/is"
@@ -56,5 +57,15 @@ func TestNumberFilter(t *testing.T) {
 		nf := filter.NewNumberFilter("age").IsNotEmpty()
 		is.Equal(*nf.Number.IsNotEmpty, true)
 		is.Equal(nf.Property, "age")
+	})
+
+	t.Run("json marshal", func(t *testing.T) {
+		t.Run("equals", func(t *testing.T) {
+			nf := filter.NewNumberFilter("age").Equals(2)
+			b, err := json.Marshal(nf)
+			is.NoErr(err)
+			want := `{"property":"age","number":{"equals":2}}`
+			is.Equal(want, string(b))
+		})
 	})
 }
