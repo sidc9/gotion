@@ -9,13 +9,15 @@ import (
 )
 
 func TestOrFilter(t *testing.T) {
-	n := NewNumberFilter("p1")
-	c := NewCheckboxFilter("p2")
-	or, _ := NewOrFilter(n, c)
-
 	is := is.New(t)
+
+	n := NewNumberFilter("p1").Equals(3)
+	// c := NewCheckboxFilter("p2")
+	or, err := NewOrFilter(n)
+	is.NoErr(err)
+
 	is.Equal(or.Or[0], n)
-	is.Equal(or.Or[1], c)
+	// is.Equal(or.Or[1], c)
 
 	b, err := json.Marshal(or)
 	is.NoErr(err)
