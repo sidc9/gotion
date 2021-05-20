@@ -1,9 +1,13 @@
 package filter
 
+import "encoding/json"
+
 type CheckboxFilter struct {
-	Property string               `json:"property"`
-	Checkbox *checkboxFilterParam `json:"checkbox,omitempty"`
-	isSet    bool                 `json:"-"`
+	property  string               `json:"property"`
+	Checkbox  *checkboxFilterParam `json:"checkbox,omitempty"`
+	isSet     bool                 `json:"-"`
+	value     interface{}
+	condition string
 }
 
 type checkboxFilterParam struct {
@@ -12,14 +16,17 @@ type checkboxFilterParam struct {
 }
 
 func NewCheckboxFilter(property string) *CheckboxFilter {
-	return &CheckboxFilter{Property: property}
+	return &CheckboxFilter{property: property}
+}
+
+func (cf *CheckboxFilter) Condition() string {
+	return cf.condition
 }
 
 func (cf *CheckboxFilter) Equals(b bool) *CheckboxFilter {
-	cf.Checkbox = &checkboxFilterParam{
-		Equals: &b,
-	}
 	cf.isSet = true
+	cf.condition = CondEquals
+	cf.value = b
 	return cf
 }
 
@@ -33,4 +40,22 @@ func (cf *CheckboxFilter) DoesNotEqual(b bool) *CheckboxFilter {
 
 func (cf *CheckboxFilter) IsValid() bool {
 	return cf.isSet
+}
+
+func (cf *CheckboxFilter) Property() string {
+	return cf.property
+}
+
+func (cf *CheckboxFilter) Type() string {
+	return "checkbox"
+}
+
+func (cf *CheckboxFilter) MarshalJSON() ([]byte, error) {
+	m := make(map[string]interface{})
+	m["property"] = cf.Property()
+	m[cf.Type()] = map[string]interface{}{
+		cf.Condition(): cf.value,
+	}
+
+	return json.Marshal(m)
 }

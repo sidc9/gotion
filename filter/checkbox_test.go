@@ -12,13 +12,15 @@ func TestCheckboxFilter(t *testing.T) {
 
 	t.Run("set Equals", func(t *testing.T) {
 		cf := filter.NewCheckboxFilter("is_checked").Equals(false)
-		is.Equal(*cf.Checkbox.Equals, false)
-		is.Equal(cf.Property, "is_checked")
+		is.Equal(cf.Property(), "is_checked")
+		is.Equal(cf.Condition(), "equals")
+
+		checkJSON(t, cf, `{"checkbox":{"equals":false},"property":"is_checked"}`)
 	})
 
 	t.Run("set DoesNotEqual", func(t *testing.T) {
 		cf := filter.NewCheckboxFilter("is_checked").DoesNotEqual(true)
 		is.Equal(*cf.Checkbox.DoesNotEqual, true)
-		is.Equal(cf.Property, "is_checked")
+		is.Equal(cf.Property(), "is_checked")
 	})
 }

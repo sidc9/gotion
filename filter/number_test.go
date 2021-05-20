@@ -13,56 +13,66 @@ func TestNumberFilter(t *testing.T) {
 
 	t.Run("set greaterThanOrEqual", func(t *testing.T) {
 		nf := filter.NewNumberFilter("age").GreaterThanOrEqual(2)
-		is.Equal(*nf.Number3.GreaterThanOrEqual, 2)
-		is.Equal(nf.Property, "age")
+		is.Equal(nf.Condition(), "greater_than_or_equal_to")
+		is.Equal(nf.Property(), "age")
+
+		checkJSON(t, nf, `{"number":{"greater_than_or_equal_to":2},"property":"age"}`)
 	})
 
 	t.Run("set lessThanOrEqual", func(t *testing.T) {
 		nf := filter.NewNumberFilter("age").LessThanOrEqual(2)
-		is.Equal(*nf.Number3.LessThanOrEqual, 2)
-		is.Equal(nf.Property, "age")
+		is.Equal(nf.Condition(), "less_than_or_equal_to")
+		is.Equal(nf.Property(), "age")
+
+		checkJSON(t, nf, `{"number":{"less_than_or_equal_to":2},"property":"age"}`)
 	})
 
 	t.Run("set greaterThan", func(t *testing.T) {
 		nf := filter.NewNumberFilter("age").GreaterThan(2)
-		is.Equal(*nf.Number3.GreaterThan, 2)
-		is.Equal(nf.Property, "age")
+		is.Equal(nf.Condition(), "greater_than")
+		is.Equal(nf.Property(), "age")
+
+		checkJSON(t, nf, `{"number":{"greater_than":2},"property":"age"}`)
 	})
 
 	t.Run("set lessThan", func(t *testing.T) {
 		nf := filter.NewNumberFilter("age").LessThan(2)
-		is.Equal(*nf.Number3.LessThan, 2)
-		is.Equal(nf.Property, "age")
+		is.Equal(nf.Condition(), "less_than")
+		is.Equal(nf.Property(), "age")
+
+		checkJSON(t, nf, `{"number":{"less_than":2},"property":"age"}`)
 	})
 
 	t.Run("set Equals", func(t *testing.T) {
 		nf := filter.NewNumberFilter("age").Equals(2)
-		is.Equal(nf.Number(), 2)
 		is.Equal(nf.Condition(), "equals")
-		is.Equal(nf.Property, "age")
+		is.Equal(nf.Property(), "age")
 
 		checkJSON(t, nf, `{"number":{"equals":2},"property":"age"}`)
 	})
 
 	t.Run("set NotEqual", func(t *testing.T) {
 		nf := filter.NewNumberFilter("age").DoesNotEqual(2)
-		is.Equal(nf.Number(), 2)
 		is.Equal(nf.Condition(), "does_not_equal")
-		is.Equal(nf.Property, "age")
+		is.Equal(nf.Property(), "age")
 
 		checkJSON(t, nf, `{"number":{"does_not_equal":2},"property":"age"}`)
 	})
 
 	t.Run("set IsEmpty", func(t *testing.T) {
 		nf := filter.NewNumberFilter("age").IsEmpty()
-		is.Equal(*nf.Number3.IsEmpty, true)
-		is.Equal(nf.Property, "age")
+		is.Equal(nf.Condition(), "is_empty")
+		is.Equal(nf.Property(), "age")
+
+		checkJSON(t, nf, `{"number":{"is_empty":true},"property":"age"}`)
 	})
 
 	t.Run("set IsNotEmpty", func(t *testing.T) {
 		nf := filter.NewNumberFilter("age").IsNotEmpty()
-		is.Equal(*nf.Number3.IsNotEmpty, true)
-		is.Equal(nf.Property, "age")
+		is.Equal(nf.Condition(), "is_not_empty")
+		is.Equal(nf.Property(), "age")
+
+		checkJSON(t, nf, `{"number":{"is_not_empty":true},"property":"age"}`)
 	})
 
 	t.Run("stringer", func(t *testing.T) {
