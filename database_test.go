@@ -102,7 +102,7 @@ func TestQueryDatabase(t *testing.T) {
 		}
 	})
 
-	t.Run("with filter", func(t *testing.T) {
+	t.Run("with number filter", func(t *testing.T) {
 		is := is.NewRelaxed(t)
 
 		respOut := filepath.Join("testdata", "query_db_with_filter.txt")
@@ -116,6 +116,33 @@ func TestQueryDatabase(t *testing.T) {
 		is.NoErr(err)
 		is.Equal(len(pages.Results), 1)
 		is.Equal(pages.Results[0].Properties["age"].Number, 25)
+		is.Equal(pages.Results[0].ID, "63d396a6-9687-4ea6-80c8-eea4c6212658")
+
+		if req != nil {
+			is.Equal(req.Method, http.MethodPost)
+			is.Equal(req.URL.String(), "/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
+		}
+	})
+
+	t.Run("with compound filter", func(t *testing.T) {
+		is := is.NewRelaxed(t)
+
+		respOut := filepath.Join("testdata", "query_db_with_compound_filter.txt")
+		var req *http.Request
+		c := setup(t, respOut, req)
+
+		f1 := filter.NewNumberFilter("age").Equals(23)
+		f2 := filter.NewTextFilter("description").Contains("mary")
+		ff, err := filter.NewOrFilter(f1, f2)
+		is.NoErr(err)
+
+		q := gotion.NewDBQuery().WithFilter(ff)
+
+		pages, err := c.QueryDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f", q)
+		is.NoErr(err)
+		is.Equal(len(pages.Results), 2)
+		is.Equal(pages.Results[0].ID, "63d396a6-9687-4ea6-80c8-eea4c6212658")
+		is.Equal(pages.Results[1].ID, "a0e3feca-85c9-440f-91cc-8c367d6aa9f4")
 
 		if req != nil {
 			is.Equal(req.Method, http.MethodPost)

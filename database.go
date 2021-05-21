@@ -86,15 +86,15 @@ func (c *Client) QueryDatabase(id string, query *DBQuery) (*PageList, error) {
 }
 
 type DBQuery struct {
-	Filter *filter.NumberFilter `json:"filter,omitempty"`
-	Sorts  []*Sort              `json:"sorts,omitempty"`
+	Filter filter.Filter `json:"filter,omitempty"`
+	Sorts  []*Sort       `json:"sorts,omitempty"`
 }
 
 func NewDBQuery() *DBQuery {
 	return &DBQuery{}
 }
 
-func (q *DBQuery) WithFilter(filter *filter.NumberFilter) *DBQuery {
+func (q *DBQuery) WithFilter(filter filter.Filter) *DBQuery {
 	q.Filter = filter
 	return q
 }

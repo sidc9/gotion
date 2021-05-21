@@ -1,8 +1,12 @@
 package filter
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type OrFilter struct {
+	baseFilter
 	Or []Filter `json:"or,omitempty"`
 }
 
@@ -13,4 +17,15 @@ func NewOrFilter(filters ...Filter) (*OrFilter, error) {
 		}
 	}
 	return &OrFilter{Or: filters}, nil
+}
+
+func (o *OrFilter) Type() string {
+	return "compound OR filter"
+}
+
+func (of *OrFilter) MarshalJSON() ([]byte, error) {
+	m := map[string]interface{}{
+		"or": of.Or,
+	}
+	return json.Marshal(m)
 }
