@@ -20,7 +20,7 @@ func TestCheckboxFilter(t *testing.T) {
 
 	t.Run("set DoesNotEqual", func(t *testing.T) {
 		cf := filter.NewCheckboxFilter("is_checked").DoesNotEqual(true)
-		is.Equal(*cf.Checkbox.DoesNotEqual, true)
+		is.Equal(cf.Condition(), "does_not_equal")
 		is.Equal(cf.Property(), "is_checked")
 	})
 }

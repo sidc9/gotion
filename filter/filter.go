@@ -2,7 +2,6 @@ package filter
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 type Filter interface {
@@ -10,15 +9,38 @@ type Filter interface {
 	Condition() string
 	Type() string
 	Property() string
-	fmt.Stringer
+	Value() interface{}
 }
 
-func MarshalJSON(f Filter) ([]byte, error) {
+func marshalJSON(f Filter) ([]byte, error) {
 	m := make(map[string]interface{})
 	m["property"] = f.Property()
 	m[f.Type()] = map[string]interface{}{
-		f.Condition(): f.value,
+		f.Condition(): f.Value(),
 	}
 
 	return json.Marshal(m)
+}
+
+type baseFilter struct {
+	property  string
+	isSet     bool
+	value     interface{}
+	condition string
+}
+
+func (bf *baseFilter) Condition() string {
+	return bf.condition
+}
+
+func (bf *baseFilter) Value() interface{} {
+	return bf.value
+}
+
+func (bf *baseFilter) IsValid() bool {
+	return bf.isSet
+}
+
+func (bf *baseFilter) Property() string {
+	return bf.property
 }

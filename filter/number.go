@@ -1,38 +1,15 @@
 package filter
 
-import (
-	"encoding/json"
-	"fmt"
-)
-
 type NumberFilter struct {
-	property string `json:"property"`
-
-	isSet     bool
-	value     interface{}
-	condition string
+	baseFilter
 }
 
 func NewNumberFilter(property string) *NumberFilter {
 	return &NumberFilter{
-		property: property,
+		baseFilter{
+			property: property,
+		},
 	}
-}
-
-func (nf *NumberFilter) IsValid() bool {
-	return nf.isSet
-}
-
-func (nf *NumberFilter) String() string {
-	return fmt.Sprintf("NumberFilter:%s, %s:%d", nf.property, nf.condition, nf.value)
-}
-
-func (nf *NumberFilter) Condition() string {
-	return nf.condition
-}
-
-func (nf *NumberFilter) Property() string {
-	return nf.property
 }
 
 func (nf *NumberFilter) Type() string {
@@ -96,11 +73,5 @@ func (nf *NumberFilter) IsNotEmpty() *NumberFilter {
 }
 
 func (nf *NumberFilter) MarshalJSON() ([]byte, error) {
-	m := make(map[string]interface{})
-	m["property"] = nf.Property()
-	m[nf.Type()] = map[string]interface{}{
-		nf.condition: nf.value,
-	}
-
-	return json.Marshal(m)
+	return marshalJSON(nf)
 }
