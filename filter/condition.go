@@ -9,4 +9,8 @@ const (
 	CondLessThanOrEqual    string = "less_than_or_equal_to"
 	CondIsEmpty            string = "is_empty"
 	CondIsNotEmpty         string = "is_not_empty"
+	CondContains           string = "contains"
+	CondDoesNotContain     string = "does_not_contain"
+	CondStartsWith         string = "starts_with"
+	CondEndsWith           string = "ends_with"
 )
