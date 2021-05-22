@@ -10,6 +10,7 @@ type Filter interface {
 	Type() string
 	Property() string
 	Value() interface{}
+	json.Marshaler
 }
 
 func marshalJSON(f Filter) ([]byte, error) {

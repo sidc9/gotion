@@ -1,47 +1,49 @@
 package filter
 
 type SelectFilter struct {
-	Property string             `json:"property"`
-	Select   *selectFilterParam `json:"select,omitempty"`
+	baseFilter
 }
 
-type selectFilterParam struct {
-	Equals       *string `json:"equals,omitempty"`
-	DoesNotEqual *string `json:"does_not_equal,omitempty"`
-	IsEmpty      *bool   `json:"is_empty"`
-	IsNotEmpty   *bool   `json:"is_not_empty"`
+func (sf *SelectFilter) Type() string {
+	return "select"
 }
 
 func NewSelectFilter(property string) *SelectFilter {
-	return &SelectFilter{Property: property}
+	return &SelectFilter{
+		baseFilter{
+			property: property,
+		},
+	}
 }
 
 func (sf *SelectFilter) Equals(s string) *SelectFilter {
-	sf.Select = &selectFilterParam{
-		Equals: &s,
-	}
+	sf.isSet = true
+	sf.value = s
+	sf.condition = CondEquals
 	return sf
 }
 
 func (sf *SelectFilter) DoesNotEqual(s string) *SelectFilter {
-	sf.Select = &selectFilterParam{
-		DoesNotEqual: &s,
-	}
+	sf.isSet = true
+	sf.value = s
+	sf.condition = CondDoesNotEqual
 	return sf
 }
 
 func (sf *SelectFilter) IsEmpty() *SelectFilter {
-	b := true
-	sf.Select = &selectFilterParam{
-		IsEmpty: &b,
-	}
+	sf.isSet = true
+	sf.value = true
+	sf.condition = CondIsEmpty
 	return sf
 }
 
 func (sf *SelectFilter) IsNotEmpty() *SelectFilter {
-	b := true
-	sf.Select = &selectFilterParam{
-		IsNotEmpty: &b,
-	}
+	sf.isSet = true
+	sf.value = true
+	sf.condition = CondIsNotEmpty
 	return sf
+}
+
+func (sf *SelectFilter) MarshalJSON() ([]byte, error) {
+	return marshalJSON(sf)
 }

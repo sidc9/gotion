@@ -11,26 +11,34 @@ func TestSelectFilter(t *testing.T) {
 	is := is.New(t)
 
 	t.Run("set Equals", func(t *testing.T) {
-		cf := filter.NewSelectFilter("dummy").Equals("something")
-		is.Equal(*cf.Select.Equals, "something")
-		is.Equal(cf.Property, "dummy")
+		sf := filter.NewSelectFilter("dummy").Equals("something")
+		is.Equal(sf.Condition(), "equals")
+		is.Equal(sf.Property(), "dummy")
+
+		checkJSON(t, sf, `{"property":"dummy","select":{"equals":"something"}}`)
 	})
 
 	t.Run("set DoesNotEqual", func(t *testing.T) {
-		cf := filter.NewSelectFilter("dummy").DoesNotEqual("something")
-		is.Equal(*cf.Select.DoesNotEqual, "something")
-		is.Equal(cf.Property, "dummy")
+		sf := filter.NewSelectFilter("dummy").DoesNotEqual("something")
+		is.Equal(sf.Condition(), "does_not_equal")
+		is.Equal(sf.Property(), "dummy")
+
+		checkJSON(t, sf, `{"property":"dummy","select":{"does_not_equal":"something"}}`)
 	})
 
 	t.Run("set IsEmpty", func(t *testing.T) {
-		nf := filter.NewSelectFilter("age").IsEmpty()
-		is.Equal(*nf.Select.IsEmpty, true)
-		is.Equal(nf.Property, "age")
+		sf := filter.NewSelectFilter("age").IsEmpty()
+		is.Equal(sf.Condition(), "is_empty")
+		is.Equal(sf.Property(), "age")
+
+		checkJSON(t, sf, `{"property":"age","select":{"is_empty":true}}`)
 	})
 
 	t.Run("set IsNotEmpty", func(t *testing.T) {
-		nf := filter.NewSelectFilter("age").IsNotEmpty()
-		is.Equal(*nf.Select.IsNotEmpty, true)
-		is.Equal(nf.Property, "age")
+		sf := filter.NewSelectFilter("age").IsNotEmpty()
+		is.Equal(sf.Condition(), "is_not_empty")
+		is.Equal(sf.Property(), "age")
+
+		checkJSON(t, sf, `{"property":"age","select":{"is_not_empty":true}}`)
 	})
 }
