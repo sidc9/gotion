@@ -1,47 +1,45 @@
 package filter
 
 type MultiSelectFilter struct {
-	Property    string                  `json:"property"`
-	MultiSelect *multiSelectFilterParam `json:"multiSelect,omitempty"`
-}
-
-type multiSelectFilterParam struct {
-	Contains       *string `json:"contains,omitempty"`
-	DoesNotContain *string `json:"does_not_contain,omitempty"`
-	IsEmpty        *bool   `json:"is_empty"`
-	IsNotEmpty     *bool   `json:"is_not_empty"`
+	baseFilter
 }
 
 func NewMultiSelectFilter(property string) *MultiSelectFilter {
-	return &MultiSelectFilter{Property: property}
+	return &MultiSelectFilter{baseFilter{property: property}}
+}
+
+func (ms *MultiSelectFilter) Type() string {
+	return "multi_select"
+}
+
+func (ms *MultiSelectFilter) MarshalJSON() ([]byte, error) {
+	return marshalJSON(ms)
 }
 
 func (sf *MultiSelectFilter) Contains(s string) *MultiSelectFilter {
-	sf.MultiSelect = &multiSelectFilterParam{
-		Contains: &s,
-	}
+	sf.isSet = true
+	sf.value = s
+	sf.condition = CondContains
 	return sf
 }
 
 func (sf *MultiSelectFilter) DoesNotContain(s string) *MultiSelectFilter {
-	sf.MultiSelect = &multiSelectFilterParam{
-		DoesNotContain: &s,
-	}
+	sf.isSet = true
+	sf.value = s
+	sf.condition = CondDoesNotContain
 	return sf
 }
 
 func (sf *MultiSelectFilter) IsEmpty() *MultiSelectFilter {
-	b := true
-	sf.MultiSelect = &multiSelectFilterParam{
-		IsEmpty: &b,
-	}
+	sf.isSet = true
+	sf.value = true
+	sf.condition = CondIsEmpty
 	return sf
 }
 
 func (sf *MultiSelectFilter) IsNotEmpty() *MultiSelectFilter {
-	b := true
-	sf.MultiSelect = &multiSelectFilterParam{
-		IsNotEmpty: &b,
-	}
+	sf.isSet = true
+	sf.value = true
+	sf.condition = CondIsNotEmpty
 	return sf
 }
