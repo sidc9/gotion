@@ -4,7 +4,7 @@ type DatabaseProperties map[string]*DatabaseProperty
 
 type DatabaseProperty struct {
 	Name        string                 `json:"-"`
-	Title       Title                  `json:"title"`
+	Title       RichText               `json:"title"`
 	ID          string                 `json:"id"`
 	Type        string                 `json:"type"`
 	Number      DBPropNumber           `json:"number"`
@@ -38,26 +38,18 @@ type Option struct {
 type PageProperties map[string]*PageProperty
 
 type PageProperty struct {
-	Title       []Title               `json:"title"`
-	ID          string                `json:"id"`
-	Type        string                `json:"type"`
-	Number      int                   `json:"number"`
-	Select      PagePropSelect        `json:"select"`
-	MultiSelect []PagePropMultiSelect `json:"multi_select"`
-	RichText    []*PagePropRichText   `json:"rich_text"`
+	Title       []*RichText            `json:"title"`
+	ID          string                 `json:"id"`
+	Type        string                 `json:"type"`
+	Number      int                    `json:"number"`
+	Select      PagePropSelect         `json:"select"`
+	MultiSelect []*PagePropMultiSelect `json:"multi_select"`
+	RichText    []*RichText            `json:"rich_text"`
 }
 
 type PagePropName struct {
 	ID   string `json:"id"`
 	Type string `json:"type"`
-}
-
-type Title struct {
-	Type        string     `json:"type"`
-	Text        Text       `json:"text"`
-	Annotations Annotation `json:"annotations"`
-	PlainText   string     `json:"plain_text"`
-	Href        string     `json:"href"`
 }
 
 type PagePropMultiSelect struct {
@@ -72,7 +64,7 @@ type PagePropSelect struct {
 	Color string `json:"color"`
 }
 
-type PagePropRichText struct {
+type RichText struct {
 	Type        string     `json:"type"`
 	Text        Text       `json:"text"`
 	Annotations Annotation `json:"annotations"`

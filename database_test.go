@@ -67,6 +67,8 @@ func TestGetDatabase(t *testing.T) {
 	is.NoErr(err)
 	is.Equal(db.Object, "database")
 	is.Equal(db.ID, "934c6132-4ea7-485e-9b0d-cf1a083e0f3f")
+	is.Equal(db.Title[0].PlainText, "API Testing")
+	is.Equal(db.Title[0].Text.Content, "API Testing")
 	is.Equal(db.Properties["age"].Number.Format, "number")
 	is.Equal(db.Properties["gender"].Select.Options[0].Name, "male")
 	is.Equal(db.Properties["gender"].Select.Options[1].Name, "female")

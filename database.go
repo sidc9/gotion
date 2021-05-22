@@ -8,11 +8,12 @@ import (
 )
 
 type Database struct {
-	CreatedTime    string             `json:"created_time"`
 	ID             string             `json:"id"`
+	CreatedTime    string             `json:"created_time"`
 	LastEditedTime string             `json:"last_edited_time"`
 	Object         string             `json:"object"`
 	Properties     DatabaseProperties `json:"properties"`
+	Title          []*RichText        `json:"title"`
 }
 
 func (*Database) TypeName() string {
