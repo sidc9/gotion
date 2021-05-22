@@ -1,7 +1,41 @@
 # WIP
 ## TODO
-- [ ] Complete all types of DatabaseProperties
-- [ ] Complete all types of PageProperties
-- [ ] Complete all types of Filters
+- [ ] DatabaseProperties
+    - [x] Title
+    - [x] Number
+    - [x] RichText
+    - [ ] Checkbox
+    - [x] Select
+    - [x] MultiSelect
+    - [ ] Date
+    - [ ] People
+    - [ ] Files
+    - [ ] Relation
+    - [ ] Formula
+- [ ] PageProperties
+    - [x] Title
+    - [x] Number
+    - [x] RichText
+    - [ ] Checkbox
+    - [x] Select
+    - [x] MultiSelect
+    - [ ] Date
+    - [ ] People
+    - [ ] Files
+    - [ ] Relation
+    - [ ] Formula
+- [ ] Filters
+    - [x] Number
+    - [x] Text
+    - [x] Checkbox
+    - [x] Select
+    - [x] MultiSelect
+    - [ ] Date
+    - [ ] People
+    - [ ] Files
+    - [ ] Relation
+    - [ ] Formula
+    - [ ] And
+    - [x] Or
 - [ ] Other endpoints...
 
