@@ -4,7 +4,7 @@
     - [x] Title
     - [x] Number
     - [x] RichText
-    - [ ] Checkbox
+    - [x] Checkbox
     - [x] Select
     - [x] MultiSelect
     - [ ] Date
@@ -16,7 +16,7 @@
     - [x] Title
     - [x] Number
     - [x] RichText
-    - [ ] Checkbox
+    - [x] Checkbox
     - [x] Select
     - [x] MultiSelect
     - [ ] Date

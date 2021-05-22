@@ -3,14 +3,15 @@ package gotion
 type DatabaseProperties map[string]*DatabaseProperty
 
 type DatabaseProperty struct {
-	Name        string                 `json:"-"`
-	Title       RichText               `json:"title"`
-	ID          string                 `json:"id"`
-	Type        string                 `json:"type"`
-	Number      DBPropNumber           `json:"number"`
-	MultiSelect DBPropMultiSelect      `json:"multi_select"`
-	Select      DBPropSelect           `json:"select"`
-	RichText    map[string]interface{} `json:"rich_text"`
+	Name        string            `json:"-"`
+	Title       RichText          `json:"title"`
+	ID          string            `json:"id"`
+	Type        string            `json:"type"`
+	Number      DBPropNumber      `json:"number"`
+	MultiSelect DBPropMultiSelect `json:"multi_select"`
+	Select      DBPropSelect      `json:"select"`
+	RichText    struct{}          `json:"rich_text"`
+	Checkbox    struct{}          `json:"checkbox"`
 }
 
 type DBPropNumber struct {
@@ -45,6 +46,7 @@ type PageProperty struct {
 	Select      PagePropSelect         `json:"select"`
 	MultiSelect []*PagePropMultiSelect `json:"multi_select"`
 	RichText    []*RichText            `json:"rich_text"`
+	Checkbox    bool                   `json:"checkbox"`
 }
 
 type PagePropName struct {
