@@ -76,6 +76,7 @@ func TestGetDatabase(t *testing.T) {
 	is.Equal(db.Properties["hobbies"].MultiSelect.Options[1].Name, "cycling")
 	is.Equal(db.Properties["hobbies"].MultiSelect.Options[2].Name, "swimming")
 	is.Equal(db.Properties["description"].RichText, struct{}{})
+	is.Equal(db.Properties["created at"].RichText, struct{}{})
 }
 
 func TestQueryDatabase(t *testing.T) {
@@ -185,6 +186,8 @@ func TestQueryDatabase(t *testing.T) {
 		is.Equal(item2.Properties["hobbies"].MultiSelect[1].Name, "swimming")
 		is.Equal(item1.Properties["is admin"].Checkbox, false)
 		is.Equal(item2.Properties["is admin"].Checkbox, true)
+		is.Equal(item1.Properties["created at"].CreatedTime, "2021-05-14T09:09:49.526Z")
+		is.Equal(item2.Properties["created at"].CreatedTime, "2021-05-15T13:28:00.000Z")
 
 		if req != nil {
 			is.Equal(req.Method, http.MethodPost)

@@ -12,6 +12,7 @@ type DatabaseProperty struct {
 	Select      DBPropSelect      `json:"select"`
 	RichText    struct{}          `json:"rich_text"`
 	Checkbox    struct{}          `json:"checkbox"`
+	CreatedTime struct{}          `json:"created_time"`
 }
 
 type DBPropNumber struct {
@@ -47,6 +48,7 @@ type PageProperty struct {
 	MultiSelect []*PagePropMultiSelect `json:"multi_select"`
 	RichText    []*RichText            `json:"rich_text"`
 	Checkbox    bool                   `json:"checkbox"`
+	CreatedTime string                 `json:"created_time"`
 }
 
 type PagePropName struct {
