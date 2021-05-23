@@ -35,7 +35,7 @@
     - [ ] Files
     - [ ] Relation
     - [ ] Formula
-    - [ ] And
+    - [x] And
     - [x] Or
 - [ ] Other endpoints...
 
