@@ -7,7 +7,7 @@
     - [x] Checkbox
     - [x] Select
     - [x] MultiSelect
-    - [ ] Date
+    - [x] Date
     - [ ] People
     - [ ] Files
     - [ ] Relation
@@ -19,7 +19,7 @@
     - [x] Checkbox
     - [x] Select
     - [x] MultiSelect
-    - [ ] Date
+    - [x] Date
     - [ ] People
     - [ ] Files
     - [ ] Relation
@@ -30,7 +30,7 @@
     - [x] Checkbox
     - [x] Select
     - [x] MultiSelect
-    - [ ] Date
+    - [x] Date
     - [ ] People
     - [ ] Files
     - [ ] Relation
