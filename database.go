@@ -48,16 +48,6 @@ func (c *Client) GetDatabase(id string) (*Database, error) {
 	return &db, nil
 }
 
-type Page struct {
-	CreatedTime    string                 `json:"created_time"`
-	ID             string                 `json:"id"`
-	LastEditedTime string                 `json:"last_edited_time"`
-	Object         string                 `json:"object"`
-	Properties     PageProperties         `json:"properties"`
-	Archived       bool                   `json:"archived"`
-	Parent         map[string]interface{} `json:"parent"`
-}
-
 type PageList struct {
 	Response
 	Results []*Page `json:"results"`
