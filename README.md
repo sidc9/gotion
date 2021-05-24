@@ -37,5 +37,12 @@
     - [ ] Formula
     - [x] And
     - [x] Or
-- [ ] Other endpoints...
+- [x] Retrieve a page
+- [ ] Create a page
+- [ ] Update page properties
+- [ ] Retrieve block children
+- [ ] Append block children
+- [ ] Retrieve a user
+- [ ] List all users
+- [ ] Search
 
