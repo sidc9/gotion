@@ -14,6 +14,12 @@ type Database struct {
 	Object         string             `json:"object"`
 	Properties     DatabaseProperties `json:"properties"`
 	Title          []*RichText        `json:"title"`
+
+	c *Client
+}
+
+func (d *Database) Query(query *DBQuery) (*PageList, error) {
+	return d.c.QueryDatabase(d.ID, query)
 }
 
 func (*Database) TypeName() string {
@@ -40,12 +46,12 @@ func (c *Client) GetDatabase(id string) (*Database, error) {
 		return nil, fmt.Errorf("id is required")
 	}
 
-	var db Database
-	if err := c.doRequest(http.MethodGet, fmt.Sprintf("databases/%s", id), nil, &db); err != nil {
+	db := &Database{c: c}
+	if err := c.doRequest(http.MethodGet, fmt.Sprintf("databases/%s", id), nil, db); err != nil {
 		return nil, err
 	}
 
-	return &db, nil
+	return db, nil
 }
 
 type PageList struct {

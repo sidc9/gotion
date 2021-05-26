@@ -1,13 +1,38 @@
 // +build examples
 
-package gotion
+package gotion_test
 
 import (
 	"fmt"
-	"io/ioutil"
 	"reflect"
-	"strings"
+
+	"github.com/sidc9/gotion"
 )
+
+func ExampleDatabase_Query() {
+	apiKey, err := loadAPIKey()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	c := gotion.NewClient(apiKey, gotion.DefaultURL)
+
+	db, err := c.GetDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	s := gotion.NewPropertySort("age", gotion.SortAscending)
+	q := gotion.NewDBQuery().WithSorts([]*gotion.Sort{s})
+	pages, err := db.Query(q)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(len(pages.Results))
+
+	// Output: 2
+}
 
 func ExampleClient_GetPage() {
 	apiKey, err := loadAPIKey()
@@ -15,7 +40,7 @@ func ExampleClient_GetPage() {
 		fmt.Println(err)
 	}
 
-	c := NewClient(apiKey, DefaultURL)
+	c := gotion.NewClient(apiKey, gotion.DefaultURL)
 
 	dbs, err := c.ListDatabases()
 	if err != nil {
@@ -35,13 +60,4 @@ func ExampleClient_GetPage() {
 	fmt.Println(reflect.DeepEqual(page, pages.Results[0]))
 
 	// Output: true
-}
-
-func loadAPIKey() (string, error) {
-	b, err := ioutil.ReadFile(".env")
-	if err != nil {
-		return "", err
-	}
-
-	return strings.TrimSuffix(string(b), "\n"), nil
 }
