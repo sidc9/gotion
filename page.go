@@ -13,6 +13,8 @@ type Page struct {
 	Properties     PageProperties         `json:"properties"`
 	Archived       bool                   `json:"archived"`
 	Parent         map[string]interface{} `json:"parent"`
+
+	c *Client
 }
 
 func (p *Page) Title() string {
@@ -33,6 +35,10 @@ func (p *Page) ParentID() string {
 	return p.Parent[typ].(string)
 }
 
+func (p *Page) Content() (*PageContent, error) {
+	return p.c.GetPageContent(p.ID)
+}
+
 type PageContent struct {
 	Object     string   `json:"object"`
 	Results    []*Block `json:"results"`
@@ -45,13 +51,13 @@ func (c *Client) GetPage(id string) (*Page, error) {
 		return nil, fmt.Errorf("id is required")
 	}
 
-	var page Page
-	err := c.doRequest(http.MethodGet, fmt.Sprintf("pages/%s", id), nil, &page)
+	page := &Page{c: c}
+	err := c.doRequest(http.MethodGet, fmt.Sprintf("pages/%s", id), nil, page)
 	if err != nil {
 		return nil, err
 	}
 
-	return &page, nil
+	return page, nil
 }
 
 func (c *Client) GetPageContent(id string) (*PageContent, error) {
