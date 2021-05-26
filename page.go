@@ -40,40 +40,6 @@ type PageContent struct {
 	NextCursor string   `json:"next_cursor"`
 }
 
-// TODO get block children
-type Block struct {
-	ID             string `json:"id"`
-	CreatedTime    string `json:"created_time"`
-	LastEditedTime string `json:"last_edited_time"`
-	Object         string `json:"object"`
-	HasChildren    bool   `json:"has_children"`
-	Type           string `json:"type"`
-
-	Heading1  BlockText `json:"heading_1"`
-	Heading2  BlockText `json:"heading_2"`
-	Heading3  BlockText `json:"heading_3"`
-	Paragraph BlockText `json:"paragraph"`
-	// TODO: more types of content
-}
-
-type BlockText struct {
-	Text []*RichText `json:"text"`
-}
-
-func (b *Block) Content() (interface{}, error) {
-	switch b.Type {
-	case "heading_1":
-		return b.Heading1, nil
-	case "heading_2":
-		return b.Heading2, nil
-	case "heading_3":
-		return b.Heading3, nil
-	case "paragraph":
-		return b.Paragraph, nil
-	}
-	return nil, fmt.Errorf("block type is not set")
-}
-
 func (c *Client) GetPage(id string) (*Page, error) {
 	if id == "" {
 		return nil, fmt.Errorf("id is required")

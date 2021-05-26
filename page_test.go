@@ -58,5 +58,6 @@ func TestGetPageContent(t *testing.T) {
 
 	is.Equal("John Smith", content.Results[0].Heading1.Text[0].PlainText)
 	is.Equal("He loves ", content.Results[1].Paragraph.Text[0].PlainText)
+	// TODO
 	// is.Equal("He loves reading and cycling.", content.Results[1].Paragraph.Text[0].PlainText)
 }
