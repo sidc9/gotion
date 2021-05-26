@@ -15,6 +15,25 @@ type Page struct {
 	Parent         map[string]interface{} `json:"parent"`
 }
 
+func (p *Page) Title() string {
+	for _, v := range p.Properties {
+		if v.Type == "title" {
+			return v.Title[0].PlainText
+		}
+	}
+	return ""
+}
+
+func (p *Page) ParentID() string {
+	for k, v := range p.Parent {
+		if k != "type" {
+			s := v.(string)
+			return s
+		}
+	}
+	return ""
+}
+
 func (c *Client) GetPage(id string) (*Page, error) {
 	if id == "" {
 		return nil, fmt.Errorf("id is required")
