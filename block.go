@@ -1,5 +1,10 @@
 package gotion
 
+import (
+	"fmt"
+	"net/http"
+)
+
 // TODO get block children
 type Block struct {
 	ID             string `json:"id"`
@@ -18,4 +23,15 @@ type Block struct {
 
 type BlockText struct {
 	Text []*RichText `json:"text"`
+}
+
+func (b *Block) GetChildren() error {
+	if !b.HasChildren {
+		return fmt.Errorf("block does not have children")
+	}
+
+	var pc map[string]interface{}
+	err := client.doRequest(http.MethodGet, fmt.Sprintf("blocks/%s/children", b.ID), nil, &pc)
+	fmt.Println(">>>", pc)
+	return err
 }

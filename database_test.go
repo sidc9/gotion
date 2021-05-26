@@ -199,15 +199,13 @@ func TestQueryDatabase(t *testing.T) {
 func setup(t *testing.T, saveRespFilename string, req *http.Request) *gotion.Client {
 	is := is.New(t)
 
-	var c *gotion.Client
-
 	apiKey, err := loadAPIKey()
 	is.NoErr(err)
 
 	if saveResponse {
 		t.Logf("    * saving to: %s\n", saveRespFilename)
-		c = gotion.NewClient(apiKey, "")
-		c.SaveResponse(saveRespFilename)
+		gotion.Init(apiKey, "")
+		gotion.SaveResponse(saveRespFilename)
 	} else {
 		h := func(w http.ResponseWriter, r *http.Request) {
 			// instead of asserting the request fields here,
@@ -224,10 +222,10 @@ func setup(t *testing.T, saveRespFilename string, req *http.Request) *gotion.Cli
 
 		srv := httptest.NewServer(http.HandlerFunc(h))
 		t.Cleanup(srv.Close)
-		c = gotion.NewClient(apiKey, srv.URL)
+		gotion.Init(apiKey, srv.URL)
 	}
 
-	return c
+	return gotion.GetClient()
 }
 
 func loadAPIKey() (string, error) {
