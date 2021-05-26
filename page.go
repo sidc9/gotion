@@ -6,8 +6,8 @@ import (
 )
 
 type Page struct {
-	CreatedTime    string                 `json:"created_time"`
 	ID             string                 `json:"id"`
+	CreatedTime    string                 `json:"created_time"`
 	LastEditedTime string                 `json:"last_edited_time"`
 	Object         string                 `json:"object"`
 	Properties     PageProperties         `json:"properties"`
@@ -25,13 +25,53 @@ func (p *Page) Title() string {
 }
 
 func (p *Page) ParentID() string {
-	for k, v := range p.Parent {
-		if k != "type" {
-			s := v.(string)
-			return s
-		}
+	typ := p.Parent["type"].(string)
+	if typ == "workspace" {
+		return typ
 	}
-	return ""
+
+	return p.Parent[typ].(string)
+}
+
+type PageContent struct {
+	Object     string   `json:"object"`
+	Results    []*Block `json:"results"`
+	HasMore    bool     `json:"has_more"`
+	NextCursor string   `json:"next_cursor"`
+}
+
+// TODO get block children
+type Block struct {
+	ID             string `json:"id"`
+	CreatedTime    string `json:"created_time"`
+	LastEditedTime string `json:"last_edited_time"`
+	Object         string `json:"object"`
+	HasChildren    bool   `json:"has_children"`
+	Type           string `json:"type"`
+
+	Heading1  BlockText `json:"heading_1"`
+	Heading2  BlockText `json:"heading_2"`
+	Heading3  BlockText `json:"heading_3"`
+	Paragraph BlockText `json:"paragraph"`
+	// TODO: more types of content
+}
+
+type BlockText struct {
+	Text []*RichText `json:"text"`
+}
+
+func (b *Block) Content() (interface{}, error) {
+	switch b.Type {
+	case "heading_1":
+		return b.Heading1, nil
+	case "heading_2":
+		return b.Heading2, nil
+	case "heading_3":
+		return b.Heading3, nil
+	case "paragraph":
+		return b.Paragraph, nil
+	}
+	return nil, fmt.Errorf("block type is not set")
 }
 
 func (c *Client) GetPage(id string) (*Page, error) {
@@ -46,6 +86,20 @@ func (c *Client) GetPage(id string) (*Page, error) {
 	}
 
 	return &page, nil
+}
+
+func (c *Client) GetPageContent(id string) (*PageContent, error) {
+	if id == "" {
+		return nil, fmt.Errorf("id is required")
+	}
+
+	var pc PageContent
+	err := c.doRequest(http.MethodGet, fmt.Sprintf("blocks/%s/children", id), nil, &pc)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pc, nil
 }
 
 // TODO children, example/test
