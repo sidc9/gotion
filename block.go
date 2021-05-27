@@ -18,6 +18,7 @@ type Block struct {
 	Heading2  BlockText `json:"heading_2"`
 	Heading3  BlockText `json:"heading_3"`
 	Paragraph BlockText `json:"paragraph"`
+	Bullet    BlockText `json:"bulleted_list_item"`
 	// TODO: more types of content
 }
 
@@ -25,13 +26,15 @@ type BlockText struct {
 	Text []*RichText `json:"text"`
 }
 
-func (b *Block) GetChildren() error {
+func (b *Block) GetChildren() (*PageContent, error) {
 	if !b.HasChildren {
-		return fmt.Errorf("block does not have children")
+		return nil, fmt.Errorf("block does not have children")
 	}
 
-	var pc map[string]interface{}
+	var pc PageContent
 	err := client.doRequest(http.MethodGet, fmt.Sprintf("blocks/%s/children", b.ID), nil, &pc)
-	fmt.Println(">>>", pc)
-	return err
+	if err != nil {
+		return nil, err
+	}
+	return &pc, nil
 }

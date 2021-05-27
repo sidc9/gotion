@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/matryer/is"
+	"github.com/sidc9/gotion"
 )
 
 func TestGetBlockChildren(t *testing.T) {
@@ -13,12 +14,14 @@ func TestGetBlockChildren(t *testing.T) {
 
 	respOut := filepath.Join("testdata", "get_block_children.txt")
 	var req *http.Request
-	c := setup(t, respOut, req)
+	setup(t, respOut, req)
 
-	pageID := "a0e3feca-85c9-440f-91cc-8c367d6aa9f4"
-	content, err := c.GetPageContent(pageID)
+	b := &gotion.Block{
+		ID:          "d684b6f5-a784-4c06-836e-e596a764b404",
+		HasChildren: true,
+	}
+	child, err := b.GetChildren()
 	is.NoErr(err)
 
-	err = content.Results[1].GetChildren()
-	is.NoErr(err)
+	is.Equal("yes he does", child.Results[0].Bullet.Text[0].PlainText)
 }
