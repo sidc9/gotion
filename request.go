@@ -25,7 +25,7 @@ func (c *Client) doRequest(method, path string, body interface{}, response inter
 		return err
 	}
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return err
 	}

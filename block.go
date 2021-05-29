@@ -14,12 +14,20 @@ type Block struct {
 	HasChildren    bool   `json:"has_children"`
 	Type           string `json:"type"`
 
-	Heading1  BlockText `json:"heading_1"`
-	Heading2  BlockText `json:"heading_2"`
-	Heading3  BlockText `json:"heading_3"`
-	Paragraph BlockText `json:"paragraph"`
-	Bullet    BlockText `json:"bulleted_list_item"`
-	// TODO: more types of content
+	Heading1   BlockText     `json:"heading_1"`
+	Heading2   BlockText     `json:"heading_2"`
+	Heading3   BlockText     `json:"heading_3"`
+	Paragraph  BlockText     `json:"paragraph"`
+	BulletList BlockText     `json:"bulleted_list_item"`
+	NumberList BlockText     `json:"numbered_list_item"`
+	ToDo       BlockCheckbox `json:"to_do"`
+	Toggle     BlockText     `json:"toggle"`
+	// TODO: child_page
+}
+
+type BlockCheckbox struct {
+	BlockText
+	Checked bool `json:"checked"`
 }
 
 type BlockText struct {

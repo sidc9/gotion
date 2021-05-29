@@ -1,12 +1,13 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"strings"
 
-	"github.com/kr/pretty"
 	"github.com/sidc9/gotion"
 )
 
@@ -23,13 +24,37 @@ func run() error {
 		return err
 	}
 
-	c := gotion.NewClient(apiKey, gotion.DefaultURL)
+	// c := gotion.NewClient(apiKey, gotion.DefaultURL)
 
-	resp, err := c.ListDatabases()
+	// resp, err := c.ListDatabases()
+	// if err != nil {
+	//     return err
+	// }
+
+	// for _, r := range resp.Results {
+	//     fmt.Println(r.Title[0].PlainText, r.ID)
+	// }
+
+	gotion.Init(apiKey, gotion.DefaultURL)
+	c := gotion.GetClient()
+
+	pg, err := c.GetPage("a0e3feca-85c9-440f-91cc-8c367d6aa9f4")
 	if err != nil {
 		return err
 	}
-	pretty.Println(resp)
+
+	content, err := pg.Content()
+	if err != nil {
+		return err
+	}
+
+	children, err := content.Results[1].GetChildren()
+	if err != nil {
+		return err
+	}
+
+	ch, _ := json.Marshal(children)
+	fmt.Println(string(ch))
 
 	return nil
 }

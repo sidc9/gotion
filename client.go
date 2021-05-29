@@ -1,9 +1,12 @@
 package gotion
 
+import "net/http"
+
 type Client struct {
 	apiKey       string
 	baseURL      string
 	responseFile string
+	httpClient   *http.Client
 }
 
 const DefaultURL = "https://api.notion.com/v1"
@@ -15,10 +18,12 @@ func NewClient(apiKey, baseURL string) *Client {
 		baseURL = DefaultURL
 	}
 
-	return &Client{
-		apiKey:  apiKey,
-		baseURL: baseURL,
+	client = &Client{
+		apiKey:     apiKey,
+		baseURL:    baseURL,
+		httpClient: http.DefaultClient,
 	}
+	return client
 }
 
 func (c *Client) SaveResponse(filename string) {
@@ -35,4 +40,8 @@ func SaveResponse(filename string) {
 
 func GetClient() *Client {
 	return client
+}
+
+func (c *Client) WithHTTPClient(httpClient *http.Client) {
+	c.httpClient = httpClient
 }
