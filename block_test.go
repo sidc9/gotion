@@ -1,45 +1,24 @@
 package gotion_test
 
 import (
-	"bytes"
-	"io/ioutil"
 	"net/http"
-	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/matryer/is"
 	"github.com/sidc9/gotion"
 )
 
-func setResponse(t *testing.T, c *gotion.Client, responseFile string) {
-	filename := filepath.Join("testdata", responseFile)
-	if saveResponse {
-		t.Logf("    * saving to: %s\n", filename)
-		c.SaveResponse(filename)
-	} else {
-		f, err := os.ReadFile(filename)
-		if err != nil {
-			panic(err)
-		}
-
-		c.WithHTTPClient(&http.Client{
-			Transport: &mockRoundTripper{
-				fn: func(r *http.Request) (*http.Response, error) {
-					return &http.Response{
-						StatusCode: 200,
-						Body:       ioutil.NopCloser(bytes.NewBuffer(f)),
-					}, nil
-				},
-			},
-		})
-	}
-}
-
 func TestGetBlockChildren(t *testing.T) {
 	is := is.New(t)
 
 	c := getClient(t)
+	// req := &http.Request{
+	//     Method: http.MethodGet,
+	//     URL: &url.URL{
+	//         Path: "blocks/7eb342cf-c40c-43b3-b2ee-c0f8c2c79d88/children",
+	//     },
+	// }
+	// setResponse(t, c, req, "get_block_children.txt")
 	setResponse(t, c, "get_block_children.txt")
 
 	b := &gotion.Block{
@@ -58,6 +37,10 @@ func TestGetBlockChildren(t *testing.T) {
 	is.Equal("this is a toggle", child.Results[3].Toggle.Text[0].PlainText)
 	is.Equal(true, child.Results[3].HasChildren)
 
+	// req.URL = &url.URL{
+	//     Path: "blocks/8dfd5961-783b-4707-8523-0de4a5dbd580/children",
+	// }
+	// setResponse(t, c, req, "get_block_children_2.txt")
 	setResponse(t, c, "get_block_children_2.txt")
 	toggleChild, err := child.Results[3].GetChildren()
 	is.NoErr(err)

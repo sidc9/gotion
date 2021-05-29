@@ -3,9 +3,7 @@ package gotion_test
 import (
 	"flag"
 	"fmt"
-	"net/http"
 	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/matryer/is"
@@ -30,9 +28,8 @@ func TestMain(m *testing.M) {
 func TestListDatabases(t *testing.T) {
 	is := is.New(t)
 
-	respOut := filepath.Join("testdata", "list_db.txt")
-	var req *http.Request
-	c := setup(t, respOut, req)
+	c := getClient(t)
+	setResponse(t, c, "list_db.txt")
 	resp, err := c.ListDatabases()
 
 	is.NoErr(err)
@@ -56,9 +53,8 @@ func TestGetDatabase(t *testing.T) {
 		is.Equal(db, nil)
 	})
 
-	respOut := filepath.Join("testdata", "get_db.txt")
-	var req *http.Request
-	c := setup(t, respOut, req)
+	c := getClient(t)
+	setResponse(t, c, "get_db.txt")
 
 	db, err := c.GetDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f")
 	is.NoErr(err)
@@ -88,26 +84,25 @@ func TestQueryDatabase(t *testing.T) {
 	t.Run("simple query", func(t *testing.T) {
 		is := is.NewRelaxed(t)
 
-		respOut := filepath.Join("testdata", "query_db.txt")
-		var req *http.Request
-		c := setup(t, respOut, req)
+		c := getClient(t)
+		setResponse(t, c, "query_db.txt")
 
 		pages, err := c.QueryDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f", nil)
 		is.NoErr(err)
 		is.Equal(len(pages.Results), 2)
 
-		if req != nil {
-			is.Equal(req.Method, http.MethodPost)
-			is.Equal(req.URL.String(), "/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
-		}
+		// TODO
+		// if req != nil {
+		//     is.Equal(req.Method, http.MethodPost)
+		//     is.Equal(req.URL.String(), "/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
+		// }
 	})
 
 	t.Run("with number filter", func(t *testing.T) {
 		is := is.NewRelaxed(t)
 
-		respOut := filepath.Join("testdata", "query_db_with_filter.txt")
-		var req *http.Request
-		c := setup(t, respOut, req)
+		c := getClient(t)
+		setResponse(t, c, "query_db_with_filter.txt")
 
 		filt := filter.NewNumberFilter("age").GreaterThan(24)
 		q := gotion.NewDBQuery().WithFilter(filt)
@@ -118,18 +113,18 @@ func TestQueryDatabase(t *testing.T) {
 		is.Equal(pages.Results[0].Properties["age"].Number, 25)
 		is.Equal(pages.Results[0].ID, "63d396a6-9687-4ea6-80c8-eea4c6212658")
 
-		if req != nil {
-			is.Equal(req.Method, http.MethodPost)
-			is.Equal(req.URL.String(), "/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
-		}
+		//  TODO
+		// if req != nil {
+		//     is.Equal(req.Method, http.MethodPost)
+		//     is.Equal(req.URL.String(), "/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
+		// }
 	})
 
 	t.Run("with compound filter", func(t *testing.T) {
 		is := is.NewRelaxed(t)
 
-		respOut := filepath.Join("testdata", "query_db_with_compound_filter.txt")
-		var req *http.Request
-		c := setup(t, respOut, req)
+		c := getClient(t)
+		setResponse(t, c, "query_db_with_compound_filter.txt")
 
 		f1 := filter.NewNumberFilter("age").Equals(23)
 		f2 := filter.NewTextFilter("description").Contains("mary")
@@ -144,18 +139,18 @@ func TestQueryDatabase(t *testing.T) {
 		is.Equal(pages.Results[0].ID, "63d396a6-9687-4ea6-80c8-eea4c6212658")
 		is.Equal(pages.Results[1].ID, "a0e3feca-85c9-440f-91cc-8c367d6aa9f4")
 
-		if req != nil {
-			is.Equal(req.Method, http.MethodPost)
-			is.Equal(req.URL.String(), "/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
-		}
+		//  TODO
+		// if req != nil {
+		//     is.Equal(req.Method, http.MethodPost)
+		//     is.Equal(req.URL.String(), "/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
+		// }
 	})
 
 	t.Run("with sort", func(t *testing.T) {
 		is := is.NewRelaxed(t)
 
-		respOut := filepath.Join("testdata", "query_db_with_sort.txt")
-		var req *http.Request
-		c := setup(t, respOut, req)
+		c := getClient(t)
+		setResponse(t, c, "query_db_with_sort.txt")
 
 		sort := gotion.NewPropertySort("age", gotion.SortAscending)
 		q := gotion.NewDBQuery().WithSorts([]*gotion.Sort{sort})
@@ -186,9 +181,10 @@ func TestQueryDatabase(t *testing.T) {
 		is.Equal(item1.Properties["created at"].CreatedTime, "2021-05-14T09:09:49.526Z")
 		is.Equal(item2.Properties["created at"].CreatedTime, "2021-05-15T13:28:00.000Z")
 
-		if req != nil {
-			is.Equal(req.Method, http.MethodPost)
-			is.Equal(req.URL.String(), "/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
-		}
+		// TODO
+		// if req != nil {
+		//     is.Equal(req.Method, http.MethodPost)
+		//     is.Equal(req.URL.String(), "/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
+		// }
 	})
 }

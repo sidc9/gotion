@@ -2,8 +2,6 @@ package gotion_test
 
 import (
 	"fmt"
-	"net/http"
-	"path/filepath"
 	"testing"
 
 	"github.com/matryer/is"
@@ -20,9 +18,8 @@ func TestGetPage(t *testing.T) {
 		is.Equal(db, nil)
 	})
 
-	respOut := filepath.Join("testdata", "get_page.txt")
-	var req *http.Request
-	c := setup(t, respOut, req)
+	c := getClient(t)
+	setResponse(t, c, "get_page.txt")
 
 	pageID := "a0e3feca-85c9-440f-91cc-8c367d6aa9f4"
 	page, err := c.GetPage(pageID)
@@ -48,9 +45,8 @@ func TestGetPageContent(t *testing.T) {
 		is.Equal(db, nil)
 	})
 
-	respOut := filepath.Join("testdata", "get_page_content.txt")
-	var req *http.Request
-	c := setup(t, respOut, req)
+	c := getClient(t)
+	setResponse(t, c, "get_page_content.txt")
 
 	pageID := "a0e3feca-85c9-440f-91cc-8c367d6aa9f4"
 	content, err := c.GetPageContent(pageID)

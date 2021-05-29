@@ -1,47 +1,17 @@
 package gotion_test
 
 import (
+	"bytes"
 	"io/ioutil"
 	"net/http"
-	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/matryer/is"
 	"github.com/sidc9/gotion"
 )
-
-func setup(t *testing.T, saveRespFilename string, req *http.Request) *gotion.Client {
-	is := is.New(t)
-
-	apiKey, err := loadAPIKey()
-	is.NoErr(err)
-
-	if saveResponse {
-		t.Logf("    * saving to: %s\n", saveRespFilename)
-		gotion.Init(apiKey, "")
-		gotion.SaveResponse(saveRespFilename)
-	} else {
-		h := func(w http.ResponseWriter, r *http.Request) {
-			// instead of asserting the request fields here,
-			// save the request and assert in the main test
-			req = r
-
-			b, err := ioutil.ReadFile(saveRespFilename)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			w.Write(b)
-		}
-
-		srv := httptest.NewServer(http.HandlerFunc(h))
-		t.Cleanup(srv.Close)
-		gotion.Init(apiKey, srv.URL)
-	}
-
-	return gotion.GetClient()
-}
 
 func loadAPIKey() (string, error) {
 	b, err := ioutil.ReadFile(".env")
@@ -59,4 +29,32 @@ func getClient(t *testing.T) *gotion.Client {
 	is.NoErr(err)
 
 	return gotion.NewClient(apiKey, "")
+}
+
+// func setResponse(t *testing.T, c *gotion.Client, expectedRequest *http.Request, responseFile string) {
+func setResponse(t *testing.T, c *gotion.Client, responseFile string) {
+	filename := filepath.Join("testdata", responseFile)
+	if saveResponse {
+		t.Logf("    * saving to: %s\n", filename)
+		c.SaveResponse(filename)
+	} else {
+		f, err := os.ReadFile(filename)
+		if err != nil {
+			panic(err)
+		}
+
+		c.WithHTTPClient(&http.Client{
+			Transport: &mockRoundTripper{
+				fn: func(r *http.Request) (*http.Response, error) {
+					// if r != expectedRequest {
+					//     t.Fatal("alu")
+					// }
+					return &http.Response{
+						StatusCode: 200,
+						Body:       ioutil.NopCloser(bytes.NewBuffer(f)),
+					}, nil
+				},
+			},
+		})
+	}
 }
