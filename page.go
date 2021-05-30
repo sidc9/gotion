@@ -74,6 +74,26 @@ func (c *Client) GetPageContent(id string) (*PageContent, error) {
 	return &pc, nil
 }
 
+func (c *Client) UpdatePageProperty(pageID, propertyName string, propertyValue PageProperty) (*Page, error) {
+	if pageID == "" {
+		return nil, fmt.Errorf("page id is required")
+	}
+
+	update := map[string]interface{}{
+		"properties": map[string]interface{}{
+			propertyName: propertyValue,
+		},
+	}
+
+	page := &Page{c: c}
+	err := c.doRequest(http.MethodPatch, fmt.Sprintf("pages/%s", pageID), update, page)
+	if err != nil {
+		return nil, err
+	}
+
+	return page, nil
+}
+
 // TODO children, example/test
 type requestBody struct {
 	Properties map[string]*PageProperty `json:"properties"`

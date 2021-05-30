@@ -40,15 +40,15 @@ type Option struct {
 type PageProperties map[string]*PageProperty
 
 type PageProperty struct {
-	Title       []*RichText            `json:"title"`
-	ID          string                 `json:"id"`
-	Type        string                 `json:"type"`
-	Number      int                    `json:"number"`
-	Select      PagePropSelect         `json:"select"`
-	MultiSelect []*PagePropMultiSelect `json:"multi_select"`
-	RichText    []*RichText            `json:"rich_text"`
-	Checkbox    bool                   `json:"checkbox"`
-	CreatedTime string                 `json:"created_time"`
+	Title       []*RichText            `json:"title,omitempty"`
+	ID          string                 `json:"id,omitempty"`
+	Type        string                 `json:"type,omitempty"`
+	Number      int                    `json:"number,omitempty"`
+	Select      *PagePropSelect        `json:"select,omitempty"`
+	MultiSelect []*PagePropMultiSelect `json:"multi_select,omitempty"`
+	RichText    []*RichText            `json:"rich_text,omitempty"`
+	Checkbox    bool                   `json:"checkbox,omitempty"`
+	CreatedTime string                 `json:"created_time,omitempty"`
 }
 
 type PagePropName struct {

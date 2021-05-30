@@ -39,7 +39,7 @@
     - [x] Or
 - [x] Retrieve a page
 - [ ] Create a page
-- [ ] Update page properties
+- [x] Update page properties
 - [x] Retrieve block children
 - [ ] Append block children
 - [ ] Retrieve a user
