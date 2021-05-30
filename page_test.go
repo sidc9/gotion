@@ -2,6 +2,7 @@ package gotion_test
 
 import (
 	"fmt"
+	"net/http"
 	"testing"
 
 	"github.com/matryer/is"
@@ -19,7 +20,7 @@ func TestGetPage(t *testing.T) {
 	})
 
 	c := getClient(t)
-	setResponse(t, c, "get_page.txt")
+	setResponse(t, c, "get_page.txt", http.MethodGet, "/v1/pages/a0e3feca-85c9-440f-91cc-8c367d6aa9f4")
 
 	pageID := "a0e3feca-85c9-440f-91cc-8c367d6aa9f4"
 	page, err := c.GetPage(pageID)
@@ -46,7 +47,7 @@ func TestGetPageContent(t *testing.T) {
 	})
 
 	c := getClient(t)
-	setResponse(t, c, "get_page_content.txt")
+	setResponse(t, c, "get_page_content.txt", http.MethodGet, "/v1/blocks/a0e3feca-85c9-440f-91cc-8c367d6aa9f4/children")
 
 	pageID := "a0e3feca-85c9-440f-91cc-8c367d6aa9f4"
 	content, err := c.GetPageContent(pageID)

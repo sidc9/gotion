@@ -3,6 +3,7 @@ package gotion_test
 import (
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
 	"testing"
 
@@ -29,7 +30,7 @@ func TestListDatabases(t *testing.T) {
 	is := is.New(t)
 
 	c := getClient(t)
-	setResponse(t, c, "list_db.txt")
+	setResponse(t, c, "list_db.txt", http.MethodGet, "/v1/databases")
 	resp, err := c.ListDatabases()
 
 	is.NoErr(err)
@@ -54,7 +55,7 @@ func TestGetDatabase(t *testing.T) {
 	})
 
 	c := getClient(t)
-	setResponse(t, c, "get_db.txt")
+	setResponse(t, c, "get_db.txt", http.MethodGet, "/v1/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f")
 
 	db, err := c.GetDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f")
 	is.NoErr(err)
@@ -85,24 +86,18 @@ func TestQueryDatabase(t *testing.T) {
 		is := is.NewRelaxed(t)
 
 		c := getClient(t)
-		setResponse(t, c, "query_db.txt")
+		setResponse(t, c, "query_db.txt", http.MethodPost, "/v1/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
 
 		pages, err := c.QueryDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f", nil)
 		is.NoErr(err)
 		is.Equal(len(pages.Results), 2)
-
-		// TODO
-		// if req != nil {
-		//     is.Equal(req.Method, http.MethodPost)
-		//     is.Equal(req.URL.String(), "/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
-		// }
 	})
 
 	t.Run("with number filter", func(t *testing.T) {
 		is := is.NewRelaxed(t)
 
 		c := getClient(t)
-		setResponse(t, c, "query_db_with_filter.txt")
+		setResponse(t, c, "query_db_with_filter.txt", http.MethodPost, "/v1/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
 
 		filt := filter.NewNumberFilter("age").GreaterThan(24)
 		q := gotion.NewDBQuery().WithFilter(filt)
@@ -112,19 +107,13 @@ func TestQueryDatabase(t *testing.T) {
 		is.Equal(len(pages.Results), 1)
 		is.Equal(pages.Results[0].Properties["age"].Number, 25)
 		is.Equal(pages.Results[0].ID, "63d396a6-9687-4ea6-80c8-eea4c6212658")
-
-		//  TODO
-		// if req != nil {
-		//     is.Equal(req.Method, http.MethodPost)
-		//     is.Equal(req.URL.String(), "/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
-		// }
 	})
 
 	t.Run("with compound filter", func(t *testing.T) {
 		is := is.NewRelaxed(t)
 
 		c := getClient(t)
-		setResponse(t, c, "query_db_with_compound_filter.txt")
+		setResponse(t, c, "query_db_with_compound_filter.txt", http.MethodPost, "/v1/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
 
 		f1 := filter.NewNumberFilter("age").Equals(23)
 		f2 := filter.NewTextFilter("description").Contains("mary")
@@ -138,19 +127,13 @@ func TestQueryDatabase(t *testing.T) {
 		is.Equal(len(pages.Results), 2)
 		is.Equal(pages.Results[0].ID, "63d396a6-9687-4ea6-80c8-eea4c6212658")
 		is.Equal(pages.Results[1].ID, "a0e3feca-85c9-440f-91cc-8c367d6aa9f4")
-
-		//  TODO
-		// if req != nil {
-		//     is.Equal(req.Method, http.MethodPost)
-		//     is.Equal(req.URL.String(), "/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
-		// }
 	})
 
 	t.Run("with sort", func(t *testing.T) {
 		is := is.NewRelaxed(t)
 
 		c := getClient(t)
-		setResponse(t, c, "query_db_with_sort.txt")
+		setResponse(t, c, "query_db_with_sort.txt", http.MethodPost, "/v1/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
 
 		sort := gotion.NewPropertySort("age", gotion.SortAscending)
 		q := gotion.NewDBQuery().WithSorts([]*gotion.Sort{sort})
@@ -180,11 +163,5 @@ func TestQueryDatabase(t *testing.T) {
 		is.Equal(item2.Properties["is admin"].Checkbox, true)
 		is.Equal(item1.Properties["created at"].CreatedTime, "2021-05-14T09:09:49.526Z")
 		is.Equal(item2.Properties["created at"].CreatedTime, "2021-05-15T13:28:00.000Z")
-
-		// TODO
-		// if req != nil {
-		//     is.Equal(req.Method, http.MethodPost)
-		//     is.Equal(req.URL.String(), "/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
-		// }
 	})
 }
