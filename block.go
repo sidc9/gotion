@@ -39,8 +39,12 @@ func (b *Block) GetChildren() (*PageContent, error) {
 		return nil, fmt.Errorf("block does not have children")
 	}
 
+	return client.GetBlockChildren(b.ID)
+}
+
+func (c *Client) GetBlockChildren(blockID string) (*PageContent, error) {
 	var pc PageContent
-	err := client.doRequest(http.MethodGet, fmt.Sprintf("blocks/%s/children", b.ID), nil, &pc)
+	err := c.doRequest(http.MethodGet, fmt.Sprintf("blocks/%s/children", blockID), nil, &pc)
 	if err != nil {
 		return nil, err
 	}
