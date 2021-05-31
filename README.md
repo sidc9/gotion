@@ -41,7 +41,7 @@
 - [ ] Create a page
 - [x] Update page properties
 - [x] Retrieve block children
-- [ ] Append block children
+- [x] Append block children
 - [ ] Retrieve a user
 - [ ] List all users
 - [ ] Search

@@ -69,16 +69,16 @@ type PagePropSelect struct {
 }
 
 type RichText struct {
-	Type        string     `json:"type"`
-	Text        Text       `json:"text"`
-	Annotations Annotation `json:"annotations"`
-	PlainText   string     `json:"plain_text"`
-	Href        string     `json:"href"`
+	Type        string      `json:"type"`
+	Text        Text        `json:"text"`
+	Annotations *Annotation `json:"annotations,omitempty"`
+	PlainText   string      `json:"plain_text"`
+	Href        string      `json:"href"`
 }
 
 type Text struct {
 	Content string `json:"content"`
-	Link    string `json:"link"`
+	Link    string `json:"link,omitempty"`
 }
 
 type Annotation struct {

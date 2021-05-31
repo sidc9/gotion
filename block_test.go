@@ -36,3 +36,38 @@ func TestGetBlockChildren(t *testing.T) {
 
 	is.Equal("some text", toggleChild.Results[0].Paragraph.Text[0].PlainText)
 }
+
+func TestAppendBlockChildren(t *testing.T) {
+	if saveResponse {
+		t.Skip("blocks cannot be deleted, skipping test which modifies a page")
+	}
+
+	is := is.New(t)
+
+	c := getClient(t)
+	setResponse(t, c, "append_block_children.txt", http.MethodPatch, "/v1/blocks/63d396a6-9687-4ea6-80c8-eea4c6212658/children")
+
+	b := &gotion.Block{
+		ID: "63d396a6-9687-4ea6-80c8-eea4c6212658",
+	}
+
+	children := []*gotion.Block{
+		{
+			Object: "block",
+			Type:   "heading_1",
+			Heading1: gotion.BlockText{
+				Text: []*gotion.RichText{
+					{
+						Type: "text",
+						Text: gotion.Text{
+							Content: "her name is Mary",
+						},
+					},
+				},
+			},
+		},
+	}
+
+	_, err := b.AppendChildren(children)
+	is.NoErr(err)
+}

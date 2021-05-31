@@ -50,3 +50,19 @@ func (c *Client) GetBlockChildren(blockID string) (*PageContent, error) {
 	}
 	return &pc, nil
 }
+
+func (b *Block) AppendChildren(children []*Block) (*PageContent, error) {
+	return client.AppendBlockChildren(b.ID, children)
+}
+
+func (c *Client) AppendBlockChildren(blockID string, children []*Block) (*PageContent, error) {
+	body := map[string]interface{}{
+		"children": children,
+	}
+	var pc PageContent
+	err := c.doRequest(http.MethodPatch, fmt.Sprintf("blocks/%s/children", blockID), body, &pc)
+	if err != nil {
+		return nil, err
+	}
+	return &pc, nil
+}
