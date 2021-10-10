@@ -5,7 +5,8 @@ import (
 	"net/http"
 )
 
-// TODO get block children
+// TODO block interface : GetBlockType()
+
 type Block struct {
 	ID             string `json:"id"`
 	CreatedTime    string `json:"created_time"`
