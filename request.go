@@ -66,6 +66,7 @@ func (c *Client) handleResponse(resp *http.Response, response interface{}) error
 	var statusErr error
 	if resp.StatusCode != http.StatusOK {
 		statusErr = fmt.Errorf("http status: %s", resp.Status)
+		return unmarshalErrResponse(resp)
 	}
 
 	b, err := ioutil.ReadAll(resp.Body)
@@ -89,4 +90,20 @@ func (c *Client) handleResponse(resp *http.Response, response interface{}) error
 	}
 
 	return nil
+}
+
+func unmarshalErrResponse(resp *http.Response) error {
+	var errResp ErrResponse
+
+	if err := json.NewDecoder(resp.Body).Decode(&errResp); err != nil {
+		return NewErrResponse("", "", err)
+	}
+
+	switch resp.StatusCode {
+	case http.StatusNotFound:
+		errResp.Err = ErrNotFound
+	case http.StatusBadRequest:
+		errResp.Err = ErrBadRequest
+	}
+	return &errResp
 }

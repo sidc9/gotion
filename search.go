@@ -38,9 +38,8 @@ func (c *Client) SearchDatabaseByTitle(title string) (*Database, error) {
 		return nil, fmt.Errorf("failed to do request: %v", err)
 	}
 
-	for _, r := range resp.Results {
-		fmt.Println(r.Title[0].PlainText)
+	if len(resp.Results) == 0 {
+		return nil, ErrNotFound
 	}
-
 	return nil, nil
 }
