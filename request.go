@@ -10,7 +10,7 @@ import (
 
 var (
 	API_VERSION_KEY = "Notion-Version"
-	API_VERSION_VAL = "2021-05-13"
+	API_VERSION_VAL = "2022-02-22"
 )
 
 type Response struct {
