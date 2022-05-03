@@ -17,17 +17,41 @@ func main() {
 
 	gotion.Init(apiKey, gotion.DefaultURL)
 	c := gotion.GetClient()
-	dbs, err := c.ListDatabases()
+
+	// TODO
+	// add an abstraction layer
+	// - input: database name, sort, filter, page-size
+	// - output: list of pages, with the ability to get next batch
+
+	db, err := c.SearchDatabaseByTitle("Daily Tracking")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("database not found: %v", err)
 	}
 
-	if dbs.Response.HasMore {
-
+	sorts := gotion.NewPropertySort("Date", gotion.SortAscending)
+	query := gotion.NewDBQuery().WithSorts([]*gotion.Sort{sorts})
+	query.PageSize = 50
+	// pgList, err := c.QueryDatabase(db.ID, query)
+	pgIter, err := c.QueryDatabase(db.ID, query)
+	// pgIter, err := db.Query(query)
+	if err != nil {
+		log.Printf("query failed: %v\n", err)
+		if gotionErr, ok := err.(*gotion.ErrResponse); ok {
+			log.Println(gotionErr.Code, gotionErr.Message)
+		}
 	}
 
-	for _, db := range dbs.Results {
-		fmt.Println(db.Title[0].PlainText)
+	for pgIter.HasNext() {
+		p := pgIter.GetNext()
+		if highlight, ok := p.Properties["Summary/Highlight"]; ok {
+			rt := highlight.RichText
+			if len(rt) > 0 {
+				txt := rt[0].PlainText
+				if txt != "" {
+					fmt.Printf("%s: %s\n", p.Title(), txt)
+				}
+			}
+		}
 	}
 }
 

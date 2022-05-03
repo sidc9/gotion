@@ -18,7 +18,7 @@ type Database struct {
 	c *Client
 }
 
-func (d *Database) Query(query *DBQuery) (*PageList, error) {
+func (d *Database) Query(query *DBQuery) (*PageIter, error) {
 	return d.c.QueryDatabase(d.ID, query)
 }
 
@@ -59,7 +59,7 @@ type PageList struct {
 	Results []*Page `json:"results"`
 }
 
-func (c *Client) QueryDatabase(id string, query *DBQuery) (*PageList, error) {
+func (c *Client) QueryDatabase(id string, query *DBQuery) (*PageIter, error) {
 	if id == "" {
 		return nil, fmt.Errorf("id is required")
 	}
@@ -79,12 +79,22 @@ func (c *Client) QueryDatabase(id string, query *DBQuery) (*PageList, error) {
 		return nil, err
 	}
 
-	return &pgList, nil
+	pageIter := &PageIter{
+		client:     c,
+		hasNext:    pgList.HasMore,
+		nextCursor: pgList.NextCursor,
+		pages:      pgList.Results,
+		index:      0,
+	}
+
+	return pageIter, nil
 }
 
 type DBQuery struct {
-	Filter filter.Filter `json:"filter,omitempty"`
-	Sorts  []*Sort       `json:"sorts,omitempty"`
+	Filter      filter.Filter `json:"filter,omitempty"`
+	Sorts       []*Sort       `json:"sorts,omitempty"`
+	PageSize    int           `json:"page_size,omitempty"`
+	StartCursor string        `json:"start_cursor,omitempty"`
 }
 
 func NewDBQuery() *DBQuery {

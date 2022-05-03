@@ -13,7 +13,7 @@ func TestSearch_ByDatabaseTitle(t *testing.T) {
 
 	t.Run("successful search", func(t *testing.T) {
 		is := is.New(t)
-		title := "Todos"
+		title := "Daily Tracking"
 		db, err := c.SearchDatabaseByTitle(title)
 
 		is.NoErr(err)

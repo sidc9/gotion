@@ -41,5 +41,5 @@ func (c *Client) SearchDatabaseByTitle(title string) (*Database, error) {
 	if len(resp.Results) == 0 {
 		return nil, ErrNotFound
 	}
-	return nil, nil
+	return resp.Results[0], nil
 }
