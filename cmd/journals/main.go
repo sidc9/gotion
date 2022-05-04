@@ -4,12 +4,29 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"strings"
+	"text/template"
 
 	"github.com/sidc9/gotion"
 )
 
+type Daily struct {
+	Date string
+}
+
 func main() {
+	tmpl, err := template.New("daily").ParseFiles("./cmd/journals/dailyJournalTmpl.md")
+	if err != nil {
+		log.Fatalf("template parse failed: %v", err)
+	}
+
+	data := Daily{Date: "2022-05-04"}
+	if err := tmpl.Execute(os.Stdout, data); err != nil {
+		log.Fatalf("template execute failed: %v", err)
+	}
+	return
+
 	apiKey, err := loadAPIKey()
 	if err != nil {
 		log.Fatal(err)
