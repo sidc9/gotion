@@ -20,7 +20,7 @@ func TestGetPage(t *testing.T) {
 	})
 
 	c := getClient(t)
-	setResponse(t, c, "get_page.txt", http.MethodGet, "/v1/pages/a0e3feca-85c9-440f-91cc-8c367d6aa9f4")
+	setResponseFromFile(t, c, "get_page.txt", http.MethodGet, "/v1/pages/a0e3feca-85c9-440f-91cc-8c367d6aa9f4")
 
 	pageID := "a0e3feca-85c9-440f-91cc-8c367d6aa9f4"
 	page, err := c.GetPage(pageID)
@@ -47,7 +47,7 @@ func TestGetPageContent(t *testing.T) {
 	})
 
 	c := getClient(t)
-	setResponse(t, c, "get_page_content.txt", http.MethodGet, "/v1/blocks/a0e3feca-85c9-440f-91cc-8c367d6aa9f4/children")
+	setResponseFromFile(t, c, "get_page_content.txt", http.MethodGet, "/v1/blocks/a0e3feca-85c9-440f-91cc-8c367d6aa9f4/children")
 
 	pageID := "a0e3feca-85c9-440f-91cc-8c367d6aa9f4"
 	content, err := c.GetPageContent(pageID)
@@ -74,7 +74,7 @@ func TestUpdatePageProperty(t *testing.T) {
 	})
 
 	c := getClient(t)
-	setResponse(t, c, "update_page_property1.txt", http.MethodPatch, "/v1/pages/a0e3feca-85c9-440f-91cc-8c367d6aa9f4")
+	setResponseFromFile(t, c, "update_page_property1.txt", http.MethodPatch, "/v1/pages/a0e3feca-85c9-440f-91cc-8c367d6aa9f4")
 
 	pageID := "a0e3feca-85c9-440f-91cc-8c367d6aa9f4"
 	page, err := c.UpdatePageProperty(pageID, "age", gotion.PageProperty{Number: 21})
@@ -89,7 +89,7 @@ func TestUpdatePageProperty(t *testing.T) {
 	is.Equal(false, page.Archived)
 
 	t.Cleanup(func() {
-		setResponse(t, c, "update_page_property2.txt", http.MethodPatch, "/v1/pages/a0e3feca-85c9-440f-91cc-8c367d6aa9f4")
+		setResponseFromFile(t, c, "update_page_property2.txt", http.MethodPatch, "/v1/pages/a0e3feca-85c9-440f-91cc-8c367d6aa9f4")
 		_, err := c.UpdatePageProperty(pageID, "age", gotion.PageProperty{Number: 23})
 		is.NoErr(err)
 	})

@@ -28,28 +28,24 @@ func main() {
 		log.Fatalf("database not found: %v", err)
 	}
 
-	sorts := gotion.NewPropertySort("Date", gotion.SortAscending)
-	query := gotion.NewDBQuery().WithSorts([]*gotion.Sort{sorts})
-	query.PageSize = 50
-	// pgList, err := c.QueryDatabase(db.ID, query)
-	pgIter, err := c.QueryDatabase(db.ID, query)
-	// pgIter, err := db.Query(query)
-	if err != nil {
-		log.Printf("query failed: %v\n", err)
-		if gotionErr, ok := err.(*gotion.ErrResponse); ok {
-			log.Println(gotionErr.Code, gotionErr.Message)
-		}
-	}
+	sort := gotion.NewPropertySort("Date", gotion.SortAscending)
+	query := gotion.NewQuery().
+		WithSorts([]*gotion.Sort{sort}).
+		WithPageSize(5).
+		WithLimit(23)
 
+	pgIter := db.NewIterator(query)
 	for pgIter.HasNext() {
-		p := pgIter.GetNext()
-		if highlight, ok := p.Properties["Summary/Highlight"]; ok {
-			rt := highlight.RichText
-			if len(rt) > 0 {
-				txt := rt[0].PlainText
-				if txt != "" {
-					fmt.Printf("%s: %s\n", p.Title(), txt)
-				}
+		p, err := pgIter.GetNext()
+		if err != nil {
+			log.Fatalf("failed to GetNext: %v", err)
+		}
+
+		if highlight, ok := p.Properties.GetRichText("Summary/Highlight"); ok {
+			if highlight != "" {
+				fmt.Printf("\n%s: %s", p.Title(), highlight)
+			} else {
+				fmt.Printf(".")
 			}
 		}
 	}

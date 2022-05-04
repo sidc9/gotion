@@ -12,7 +12,7 @@ func TestGetBlockChildren(t *testing.T) {
 	is := is.New(t)
 
 	c := getClient(t)
-	setResponse(t, c, "get_block_children.txt", http.MethodGet, "/v1/blocks/7eb342cf-c40c-43b3-b2ee-c0f8c2c79d88/children")
+	setResponseFromFile(t, c, "get_block_children.txt", http.MethodGet, "/v1/blocks/7eb342cf-c40c-43b3-b2ee-c0f8c2c79d88/children")
 
 	b := &gotion.Block{
 		ID:          "7eb342cf-c40c-43b3-b2ee-c0f8c2c79d88",
@@ -30,7 +30,7 @@ func TestGetBlockChildren(t *testing.T) {
 	is.Equal("this is a toggle", child.Results[3].Toggle.Text[0].PlainText)
 	is.Equal(true, child.Results[3].HasChildren)
 
-	setResponse(t, c, "get_block_children_2.txt", http.MethodGet, "/v1/blocks/8dfd5961-783b-4707-8523-0de4a5dbd580/children")
+	setResponseFromFile(t, c, "get_block_children_2.txt", http.MethodGet, "/v1/blocks/8dfd5961-783b-4707-8523-0de4a5dbd580/children")
 	toggleChild, err := child.Results[3].GetChildren()
 	is.NoErr(err)
 
@@ -45,7 +45,7 @@ func TestAppendBlockChildren(t *testing.T) {
 	is := is.New(t)
 
 	c := getClient(t)
-	setResponse(t, c, "append_block_children.txt", http.MethodPatch, "/v1/blocks/63d396a6-9687-4ea6-80c8-eea4c6212658/children")
+	setResponseFromFile(t, c, "append_block_children.txt", http.MethodPatch, "/v1/blocks/63d396a6-9687-4ea6-80c8-eea4c6212658/children")
 
 	b := &gotion.Block{
 		ID: "63d396a6-9687-4ea6-80c8-eea4c6212658",

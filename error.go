@@ -6,8 +6,10 @@ import (
 )
 
 var (
-	ErrNotFound   = errors.New("not found")
-	ErrBadRequest = errors.New("bad request")
+	ErrNotFound      = errors.New("not found")
+	ErrBadRequest    = errors.New("bad request")
+	ErrMaxLimit      = errors.New("max limit reached")
+	ErrParamRequired = errors.New("parameter is required")
 )
 
 type ErrResponse struct {

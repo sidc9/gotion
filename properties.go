@@ -51,6 +51,19 @@ type PageProperty struct {
 	CreatedTime string                 `json:"created_time,omitempty"`
 }
 
+func (pp PageProperties) GetRichText(key string) (string, bool) {
+	prop, ok := pp[key]
+	if !ok {
+		return "", ok
+	}
+
+	if len(prop.RichText) <= 0 {
+		return "", false
+	}
+
+	return prop.RichText[0].PlainText, true
+}
+
 type PagePropName struct {
 	ID   string `json:"id"`
 	Type string `json:"type"`

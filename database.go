@@ -3,8 +3,6 @@ package gotion
 import (
 	"fmt"
 	"net/http"
-
-	"github.com/sidc9/gotion/filter"
 )
 
 type Database struct {
@@ -18,7 +16,7 @@ type Database struct {
 	c *Client
 }
 
-func (d *Database) Query(query *DBQuery) (*PageIter, error) {
+func (d *Database) Query(query *Query) (*PageIter, error) {
 	return d.c.QueryDatabase(d.ID, query)
 }
 
@@ -59,7 +57,7 @@ type PageList struct {
 	Results []*Page `json:"results"`
 }
 
-func (c *Client) QueryDatabase(id string, query *DBQuery) (*PageIter, error) {
+func (c *Client) QueryDatabase(id string, query *Query) (*PageIter, error) {
 	if id == "" {
 		return nil, fmt.Errorf("id is required")
 	}
@@ -90,23 +88,29 @@ func (c *Client) QueryDatabase(id string, query *DBQuery) (*PageIter, error) {
 	return pageIter, nil
 }
 
-type DBQuery struct {
-	Filter      filter.Filter `json:"filter,omitempty"`
-	Sorts       []*Sort       `json:"sorts,omitempty"`
-	PageSize    int           `json:"page_size,omitempty"`
-	StartCursor string        `json:"start_cursor,omitempty"`
+func (d *Database) NewIterator(query *Query) *PageIter {
+	return &PageIter{
+		client:     d.c,
+		hasNext:    true, // default
+		nextCursor: "",
+		index:      0,
+		counter:    0,
+		pages:      make([]*Page, 0),
+		query:      query,
+		dbID:       d.ID,
+	}
 }
 
-func NewDBQuery() *DBQuery {
-	return &DBQuery{}
-}
+func (c *Client) queryDatabase(id string, query *Query) (*PageList, error) {
+	if id == "" {
+		return nil, fmt.Errorf("id: %w", ErrParamRequired)
+	}
 
-func (q *DBQuery) WithFilter(filter filter.Filter) *DBQuery {
-	q.Filter = filter
-	return q
-}
+	var pgList PageList
+	err := c.doRequest(http.MethodPost, fmt.Sprintf("databases/%s/query", id), query, &pgList)
+	if err != nil {
+		return nil, err
+	}
 
-func (q *DBQuery) WithSorts(sorts []*Sort) *DBQuery {
-	q.Sorts = sorts
-	return q
+	return &pgList, nil
 }

@@ -30,7 +30,7 @@ func TestListDatabases(t *testing.T) {
 	is := is.New(t)
 
 	c := getClient(t)
-	setResponse(t, c, "list_db.txt", http.MethodGet, "/v1/databases")
+	setResponseFromFile(t, c, "list_db.txt", http.MethodGet, "/v1/databases")
 	resp, err := c.ListDatabases()
 
 	is.NoErr(err)
@@ -55,7 +55,7 @@ func TestGetDatabase(t *testing.T) {
 	})
 
 	c := getClient(t)
-	setResponse(t, c, "get_db.txt", http.MethodGet, "/v1/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f")
+	setResponseFromFile(t, c, "get_db.txt", http.MethodGet, "/v1/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f")
 
 	db, err := c.GetDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f")
 	is.NoErr(err)
@@ -86,7 +86,7 @@ func TestQueryDatabase(t *testing.T) {
 		is := is.NewRelaxed(t)
 
 		c := getClient(t)
-		setResponse(t, c, "query_db.txt", http.MethodPost, "/v1/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
+		setResponseFromFile(t, c, "query_db.txt", http.MethodPost, "/v1/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
 
 		pages, err := c.QueryDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f", nil)
 		is.NoErr(err)
@@ -97,10 +97,10 @@ func TestQueryDatabase(t *testing.T) {
 		is := is.NewRelaxed(t)
 
 		c := getClient(t)
-		setResponse(t, c, "query_db_with_filter.txt", http.MethodPost, "/v1/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
+		setResponseFromFile(t, c, "query_db_with_filter.txt", http.MethodPost, "/v1/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
 
 		filt := filter.NewNumberFilter("age").GreaterThan(24)
-		q := gotion.NewDBQuery().WithFilter(filt)
+		q := gotion.NewQuery().WithFilter(filt)
 
 		pages, err := c.QueryDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f", q)
 		is.NoErr(err)
@@ -113,14 +113,14 @@ func TestQueryDatabase(t *testing.T) {
 		is := is.NewRelaxed(t)
 
 		c := getClient(t)
-		setResponse(t, c, "query_db_with_compound_filter.txt", http.MethodPost, "/v1/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
+		setResponseFromFile(t, c, "query_db_with_compound_filter.txt", http.MethodPost, "/v1/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
 
 		f1 := filter.NewNumberFilter("age").Equals(23)
 		f2 := filter.NewTextFilter("description").Contains("mary")
 		ff, err := filter.NewOrFilter(f1, f2)
 		is.NoErr(err)
 
-		q := gotion.NewDBQuery().WithFilter(ff)
+		q := gotion.NewQuery().WithFilter(ff)
 
 		pages, err := c.QueryDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f", q)
 		is.NoErr(err)
@@ -133,10 +133,10 @@ func TestQueryDatabase(t *testing.T) {
 		is := is.NewRelaxed(t)
 
 		c := getClient(t)
-		setResponse(t, c, "query_db_with_sort.txt", http.MethodPost, "/v1/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
+		setResponseFromFile(t, c, "query_db_with_sort.txt", http.MethodPost, "/v1/databases/934c6132-4ea7-485e-9b0d-cf1a083e0f3f/query")
 
 		sort := gotion.NewPropertySort("age", gotion.SortAscending)
-		q := gotion.NewDBQuery().WithSorts([]*gotion.Sort{sort})
+		q := gotion.NewQuery().WithSorts([]*gotion.Sort{sort})
 
 		pages, err := c.QueryDatabase("934c6132-4ea7-485e-9b0d-cf1a083e0f3f", q)
 		is.NoErr(err)

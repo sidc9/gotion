@@ -1,7 +1,6 @@
 package gotion_test
 
 import (
-	"bytes"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -39,7 +38,25 @@ func getClient(t *testing.T) *gotion.Client {
 	return gotion.NewClient(apiKey, "")
 }
 
-func setResponse(t *testing.T, c *gotion.Client, responseFile, method, path string) {
+func setResponse(t *testing.T, c *gotion.Client, response, method, path string) {
+	is := is.New(t)
+
+	// replace the http client with a mock one
+	c.WithHTTPClient(&http.Client{
+		Transport: &mockRoundTripper{
+			fn: func(r *http.Request) (*http.Response, error) {
+				is.Equal(method, r.Method)
+				is.Equal(path, r.URL.Path)
+				return &http.Response{
+					StatusCode: 200,
+					Body:       ioutil.NopCloser(strings.NewReader(response)),
+				}, nil
+			},
+		},
+	})
+}
+
+func setResponseFromFile(t *testing.T, c *gotion.Client, responseFile, method, path string) {
 	t.Helper()
 	filename := filepath.Join("testdata", responseFile)
 	if saveResponse {
@@ -52,20 +69,6 @@ func setResponse(t *testing.T, c *gotion.Client, responseFile, method, path stri
 			panic(err)
 		}
 
-		is := is.New(t)
-
-		// replace the http client with a mock one
-		c.WithHTTPClient(&http.Client{
-			Transport: &mockRoundTripper{
-				fn: func(r *http.Request) (*http.Response, error) {
-					is.Equal(method, r.Method)
-					is.Equal(path, r.URL.Path)
-					return &http.Response{
-						StatusCode: 200,
-						Body:       ioutil.NopCloser(bytes.NewBuffer(f)),
-					}, nil
-				},
-			},
-		})
+		setResponse(t, c, string(f), method, path)
 	}
 }
